@@ -19,24 +19,25 @@
 
 @interface SonglistViewController: UIViewController <AVAudioPlayerDelegate, UIAlertViewDelegate>
 {
-    UIImageView *imageView;
-    UITableView *tableView;
-    AFHTTPClient *httpClient;
-    NSDictionary *downloadQueue;
+    UIImageView     *imageView;
+    UITableView     *tableView;
+    AFHTTPClient    *httpClient;
+    NSDictionary    *downloadQueue;
     
-    NSString  *bundleDocumentDirectoryPath;
+    NSString        *bundleDocumentDirectoryPath;
     
-    NSInteger currentProgress;
-    NSInteger timerInterval;
+    NSInteger       currentProgress;
+    NSInteger       timerInterval;
     
-    NSInteger songDurationinHour;
-    NSInteger songDurationinMinute;
-    NSInteger songDurationinSecond;
+    NSInteger       songDurationinHour;
+    NSInteger       songDurationinMinute;
+    NSInteger       songDurationinSecond;
     
-    NSNumber  *storedTrack;
-    NSNumber  *storedProgress;
+    NSNumber        *storedTrack;
+    NSNumber        *storedProgress;
     
-    NSTimer   *timer;
+    NSTimer         *playbackTimer;
+    NSTimer         *downloadTimer;
     
     NSIndexPath *currentDownloadIndexPath;
     NSIndexPath *currentPlayingIndexPath;

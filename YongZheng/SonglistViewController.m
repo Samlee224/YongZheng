@@ -11,8 +11,11 @@
 #import "Song.h"
 #import "DACircularProgressView.h"
 
-#define LBL_SONGTITLE 1
-#define LBL_DOWNLOADSTATUS 2
+#define LBL_SONGTITLE       1
+#define LBL_DOWNLOADSTATUS  2
+#define LBL_Duration        3
+#define BT_DOWNLOAD         4
+#define BT_PAUSE            5
 
 @interface SonglistViewController ()
 
@@ -26,6 +29,7 @@
 - (void)addDownloadButtontocell:(NSIndexPath *)indexPath;
 - (void)addProgressIndicatortocell:(NSIndexPath *)indexPath;
 - (void)onDownloadButtonClicked: (id) sender;
+- (void)onPauseDownloadButtonClicked: (id) sender;
 - (void)removeNowPlayingIndicator: (NSIndexPath *)indexPath;
 
 - (void)playOrResumeSong: (NSIndexPath *)indexPath
@@ -33,6 +37,8 @@
 
 - (void)pauseSong: (NSIndexPath *)indexPath;
 - (void)configureNowPlayingInfo: (float) elapsedPlaybackTime;
+
+
 
 @end 
 			
@@ -42,7 +48,7 @@
 @synthesize player;
 @synthesize ProgressSlider;
 @synthesize currentProgress;
-@synthesize timer;
+
 @synthesize songDurationinHour, songDurationinMinute, songDurationinSecond;
 
 - (void)viewDidLoad
@@ -219,33 +225,35 @@
     
     [cell.contentView addSubview:lbl_downlaodStatus];
     
+    UIButton *pauseButton = [UIButton buttonWithType:UIButtonTypeCustom];
+    [pauseButton setImage:[UIImage imageNamed:@"downloadProgressButtonPause.png"] forState:UIControlStateNormal];
+    [pauseButton setFrame:CGRectMake(282, 10, 26, 26)];
+    [pauseButton addTarget:self action:@selector(onPauseDownloadButtonClicked:) forControlEvents:UIControlEventTouchUpInside];
+    
+    [cell.contentView addSubview:pauseButton];
+    
+    //6. Add download request to download queue
+    [httpClient enqueueHTTPRequestOperation:operation];
+    
     //Download complete block
     [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject)
     {
-        [timer invalidate];
+        //[downloadTimer invalidate];
         [(DreamAppAppDelegate *)[[UIApplication sharedApplication] delegate] setNetworkActivityIndicatorVisible: NO];
         
         //Remove progress indicator
         [self removeProgressIndicatorfromcell:indexPath];
         
         //Add Duration Label
-        UITableViewCell *cell = [tableView cellForRowAtIndexPath:indexPath];
+        lbl_downlaodStatus.text = @"下载完成";
         
         NSArray *paths = NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSUserDomainMask, NO);
         NSString *path = [paths objectAtIndex:0];
         NSString *fileName = [NSString stringWithFormat:@"/%d.mp3", (indexPath.row + 1)];
         NSString *filePath = [path stringByAppendingString:fileName];
         
-        NSError *err;
-        
         AVAudioPlayer *tempPlayer = [[AVAudioPlayer alloc]initWithContentsOfURL:
-                                     [[NSURL alloc]initFileURLWithPath:filePath] error:&err];
-        
-        if (err) {
-            
-            NSLog(@"AVAudioPlayer Init Error");
-        
-        }
+                                     [[NSURL alloc]initFileURLWithPath:filePath] error:nil];
         
         UILabel *lbl_duration = [[UILabel alloc]init];
         [lbl_duration setFrame:CGRectMake(240, 8, 70, 30)];
@@ -268,8 +276,6 @@
         //[songArray setObject:song.fileName forKey:@"FileName"];
         
         [dictionary writeToFile:plistPath atomically:NO];
-        
-        NSLog(@"Success");
     }
     //Failed
     failure:
@@ -282,6 +288,8 @@
         
         //Todo add adtional download failed indicator as alertview is not friendly when multi download failed.
         [alert show];
+        
+        lbl_downlaodStatus.text = @"下载失败";
         
         //Remove download indicator and add download Button Back
         [self removeProgressIndicatorfromcell:indexPath];
@@ -308,11 +316,8 @@
             }
         }
         
-        lbl_downlaodStatus.text = [NSString stringWithFormat: @"%dk/%dk", (int)totalBytesRead, (int)totalBytesExpectedToRead];
+        lbl_downlaodStatus.text = [NSString stringWithFormat: @"%dk/%dk", (int)totalBytesRead/1024, (int)totalBytesExpectedToRead/1024];
     }];
-    
-    //Add download request to download queue
-    [httpClient enqueueHTTPRequestOperation:operation];
     
 }
 
@@ -388,15 +393,8 @@
     progressIndicator.trackTintColor = [UIColor clearColor];
     progressIndicator.progressTintColor = [UIColor blueColor];
     
-    UIButton *but = [UIButton buttonWithType:UIButtonTypeCustom];
-    [but setImage:[UIImage imageNamed:@"downloadProgressButtonPause.png"] forState:UIControlStateNormal];
-    [but setFrame:CGRectMake(282, 10, 26, 26)];
-    
-    //but.layer.cornerRadius = 12;
-    
     UITableViewCell *cell = [tableView cellForRowAtIndexPath:indexPath];
     [cell.contentView addSubview:progressIndicator];
-    [cell.contentView addSubview:but];
 }
 
 
@@ -457,7 +455,7 @@
     
     //Title
     UILabel *lbl_title = [[UILabel alloc]init];
-    [lbl_title setFrame:CGRectMake(30, 4, 150, 30)];
+    [lbl_title setFrame:CGRectMake(30, 2, 150, 30)];
     lbl_title.text = song.title;
     lbl_title.backgroundColor = [UIColor clearColor];
     lbl_title.font = [lbl_title.font fontWithSize:18.0];
@@ -479,13 +477,12 @@
     {
         
         //[self addDownloadButtontocell:indexPath];
-        
         UIButton *but = [UIButton buttonWithType:UIButtonTypeRoundedRect];
         [but setBackgroundImage:[UIImage imageNamed:@"downloadButton.png"] forState:UIControlStateNormal];
         [but setFrame:CGRectMake(280, 8, 30, 30)];
-        //[but setAlpha:0.8];
+       
         
-        //[but setTag:indexPath.row];
+        [but setTag:BT_DOWNLOAD];
         [but addTarget:self action:@selector(onDownloadButtonClicked:) forControlEvents:UIControlEventTouchUpInside];
         
         [songCell.contentView addSubview:but];
@@ -527,6 +524,21 @@
     }
 }
 
+- (void)onPauseDownloadButtonClicked: (id) sender
+{
+    SongCell *cell =(SongCell*) [[[sender superview] superview] superview];
+    
+    NSIndexPath *pausedIndexPath = [tableView indexPathForCell:cell];
+    
+    for (AFHTTPRequestOperation *operation in httpClient.operationQueue) {
+        id indexPath =[operation.userInfo valueForKey:@"indexPath"];
+        if ([indexPath isEqual:pausedIndexPath]) {
+            [operation cancel];
+        }
+    }
+}
+
+
 - (void)kProgressSlider:(NSTimer*)timer
 {
     self.ProgressSlider.value += 0.01;
@@ -563,7 +575,7 @@
 
 - (void) pauseSong:(NSIndexPath *)indexPath
 {
-    [timer invalidate];
+    [playbackTimer invalidate];
     [player pause];
     
     currentProgress = player.currentTime;
@@ -587,7 +599,7 @@
                        At:(NSTimeInterval)time
 {
     [player stop];
-    [timer invalidate];
+    [playbackTimer invalidate];
     
     [self removeNowPlayingIndicator:currentPlayingIndexPath];
     
@@ -642,7 +654,7 @@
         
         //Update Progress Slider
         self.currentProgress = time;
-        self.timer = [NSTimer scheduledTimerWithTimeInterval:0.01
+        playbackTimer = [NSTimer scheduledTimerWithTimeInterval:0.01
                                                       target:self
                                                     selector:@selector(kProgressSlider:)
                                                     userInfo:nil repeats:YES];
@@ -694,7 +706,7 @@
 - (void)audioPlayerDidFinishPlaying:(AVAudioPlayer *)player successfully:(BOOL)flag;
 {
     //Stop timer
-    [timer invalidate];
+    [playbackTimer invalidate];
 
     //Play next song
     NSIndexPath *indexPathofNextSong = [NSIndexPath indexPathForRow:(currentPlayingIndexPath.row+1) inSection:0];
