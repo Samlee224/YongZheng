@@ -11,6 +11,9 @@
 #import "Song.h"
 #import "DACircularProgressView.h"
 
+#define LBL_SONGTITLE 1
+#define LBL_DOWNLOADSTATUS 2
+
 @interface SonglistViewController ()
 
 - (NSString *)calculateDuration:(NSTimeInterval) duration;
@@ -182,36 +185,45 @@
 - (void)fileDownload:(NSIndexPath *)indexPath
 {
     Song *song = [songs objectAtIndex:indexPath.row];
-    
     NSURL *url = [NSURL URLWithString:song.s3Url];
+    SongCell *cell = (SongCell*)[tableView cellForRowAtIndexPath:indexPath];
     
+    //1. Create Request
     NSMutableURLRequest *request = [[NSMutableURLRequest alloc]initWithURL:url];
     
-    //Create download operation and store metadata
+    //2. Show Network Activity Indicator
+    [(DreamAppAppDelegate *)[[UIApplication sharedApplication] delegate] setNetworkActivityIndicatorVisible: YES];
+    
+    //3. Create download operation and store metadata
     AFHTTPRequestOperation *operation = [[AFHTTPRequestOperation alloc]initWithRequest:request];
     operation.userInfo = [[NSMutableDictionary alloc]init];
     [operation.userInfo setValue:indexPath forKey:@"indexPath"];
     
-    //Save file to resource folder
+    //4. Set file path for store downloaded file
     NSArray *paths = NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSUserDomainMask, YES);
     NSString *path = [paths objectAtIndex:0];
     NSString *fileName = [NSString stringWithFormat:@"/%d.mp3", (indexPath.row + 1)];
     NSString *filePath = [path stringByAppendingString:fileName];
     
-    NSLog(@"%@", filePath);
-    
-    
     operation.outputStream = [NSOutputStream outputStreamToFileAtPath:filePath append:NO];
     
-    NSLog(@"filePath = %@", filePath);
-    
+    //5. Update UI
     [self addProgressIndicatortocell:indexPath];
     [self removeDownloadButtonfromcell:indexPath];
 
+    UILabel *lbl_downlaodStatus = [[UILabel alloc]initWithFrame:CGRectMake(30, 15, 150, 30)];
+    
+    lbl_downlaodStatus.tag = LBL_DOWNLOADSTATUS;
+    lbl_downlaodStatus.text = @"准备下载";
+    lbl_downlaodStatus.font = [lbl_downlaodStatus.font fontWithSize:10.0];
+    
+    [cell.contentView addSubview:lbl_downlaodStatus];
+    
     //Download complete block
     [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject)
     {
         [timer invalidate];
+        [(DreamAppAppDelegate *)[[UIApplication sharedApplication] delegate] setNetworkActivityIndicatorVisible: NO];
         
         //Remove progress indicator
         [self removeProgressIndicatorfromcell:indexPath];
@@ -219,7 +231,7 @@
         //Add Duration Label
         UITableViewCell *cell = [tableView cellForRowAtIndexPath:indexPath];
         
-        NSArray *paths = NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSUserDomainMask, YES);
+        NSArray *paths = NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSUserDomainMask, NO);
         NSString *path = [paths objectAtIndex:0];
         NSString *fileName = [NSString stringWithFormat:@"/%d.mp3", (indexPath.row + 1)];
         NSString *filePath = [path stringByAppendingString:fileName];
@@ -263,6 +275,8 @@
     failure:
      ^(AFHTTPRequestOperation *operation, NSError *error)
     {
+        [(DreamAppAppDelegate *)[[UIApplication sharedApplication] delegate] setNetworkActivityIndicatorVisible: YES];
+        
         //Network Error, download failed
         UIAlertView *alert = [[UIAlertView alloc]initWithTitle:@"网络异常" message:@"下载失败" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles: nil];
         
@@ -282,10 +296,9 @@
         
         //Weak operation as operation is still running and data is retained
         __weak AFHTTPRequestOperation *_operation = operation;
-        NSIndexPath *indexPathforRow = [_operation.userInfo objectForKey:@"indexPath"];
+        //NSIndexPath *indexPathforRow = [_operation.userInfo objectForKey:@"indexPath"];
         
         //Update progress
-        UITableViewCell *cell = [tableView cellForRowAtIndexPath:indexPathforRow];
         for(UIView *oneView in cell.contentView.subviews)
         {
             if ([oneView isMemberOfClass:[DACircularProgressView class]])
@@ -294,6 +307,8 @@
                 _progressIndicator.progress = progress;
             }
         }
+        
+        lbl_downlaodStatus.text = [NSString stringWithFormat: @"%dk/%dk", (int)totalBytesRead, (int)totalBytesExpectedToRead];
     }];
     
     //Add download request to download queue

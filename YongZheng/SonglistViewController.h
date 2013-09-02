@@ -15,6 +15,7 @@
 #import "AFHTTPRequestOperation.h"
 #import "DACircularProgressView.h"
 #import "Reachability.h"
+#import "DreamAppAppDelegate.h"
 
 @interface SonglistViewController: UIViewController <AVAudioPlayerDelegate, UIAlertViewDelegate>
 {
@@ -41,6 +42,7 @@
     NSIndexPath *currentPlayingIndexPath;
 
 }
+
 @property (nonatomic, retain) NSMutableArray* songs;
 
 @property (nonatomic, retain) IBOutlet UITableView *tableView;

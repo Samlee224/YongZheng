@@ -9,7 +9,6 @@
 #import "DreamAppAppDelegate.h"
 
 @implementation DreamAppAppDelegate
-
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
     // Override point for customization after application launch.
