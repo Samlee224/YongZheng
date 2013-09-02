@@ -44,4 +44,21 @@
     
 }
 
+- (void) setNetworkActivityIndicatorVisible:(BOOL)setVisible
+{
+    static NSInteger NumberOfCallsToSetVisible = 0;
+    if (setVisible) {
+        NumberOfCallsToSetVisible++;
+    }
+    else
+    {
+        NumberOfCallsToSetVisible--;
+    }
+    
+    //Assert
+    NSAssert(NumberOfCallsToSetVisible >= 0, @"Network Activity Indicator was asked to hide more often than shown");
+    
+    [[UIApplication sharedApplication] setNetworkActivityIndicatorVisible:(NumberOfCallsToSetVisible > 0)];
+}
+
 @end
