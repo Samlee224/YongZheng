@@ -92,6 +92,8 @@
     [ProgressSlider setThumbImage:progressBarImage forState:UIControlStateNormal];
     [[UIApplication sharedApplication] beginReceivingRemoteControlEvents];
     
+    
+    downloadQueue = [[NSMutableDictionary alloc]init];
 
 }
 
@@ -235,6 +237,8 @@
     //6. Add download request to download queue
     [httpClient enqueueHTTPRequestOperation:operation];
     
+    [downloadQueue setValue:operation forKey:[NSString stringWithFormat:@"%d", indexPath.row]];
+    
     //Download complete block
     [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject)
     {
@@ -281,30 +285,25 @@
     failure:
      ^(AFHTTPRequestOperation *operation, NSError *error)
     {
-        [(DreamAppAppDelegate *)[[UIApplication sharedApplication] delegate] setNetworkActivityIndicatorVisible: YES];
+        [(DreamAppAppDelegate *)[[UIApplication sharedApplication] delegate] setNetworkActivityIndicatorVisible: NO];
         
-        //Network Error, download failed
-        UIAlertView *alert = [[UIAlertView alloc]initWithTitle:@"网络异常" message:@"下载失败" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles: nil];
-        
-        //Todo add adtional download failed indicator as alertview is not friendly when multi download failed.
-        [alert show];
-        
-        lbl_downlaodStatus.text = @"下载失败";
+        if (downloadPausedCount > 0) {
+            lbl_downlaodStatus.text = @"下载取消";
+        }
+        else
+        {
+            lbl_downlaodStatus.text = @"下载失败";
+        }
         
         //Remove download indicator and add download Button Back
         [self removeProgressIndicatorfromcell:indexPath];
         [self addDownloadButtontocell:indexPath];
         
     }];
-
-    //Progress block used to update progress
+    //Progress updating
     [operation setDownloadProgressBlock:^(NSUInteger bytesRead, long long totalBytesRead, long long totalBytesExpectedToRead)
     {
         float progress = (float)(int)totalBytesRead/(float)(int)totalBytesExpectedToRead;
-        
-        //Weak operation as operation is still running and data is retained
-        __weak AFHTTPRequestOperation *_operation = operation;
-        //NSIndexPath *indexPathforRow = [_operation.userInfo objectForKey:@"indexPath"];
         
         //Update progress
         for(UIView *oneView in cell.contentView.subviews)
@@ -530,12 +529,11 @@
     
     NSIndexPath *pausedIndexPath = [tableView indexPathForCell:cell];
     
-    for (AFHTTPRequestOperation *operation in httpClient.operationQueue) {
-        id indexPath =[operation.userInfo valueForKey:@"indexPath"];
-        if ([indexPath isEqual:pausedIndexPath]) {
-            [operation cancel];
-        }
-    }
+    AFHTTPRequestOperation * operation = [downloadQueue valueForKey:[NSString stringWithFormat:@"%d", pausedIndexPath.row]];
+
+    downloadPausedCount++;
+    
+    [operation cancel];
 }
 
 

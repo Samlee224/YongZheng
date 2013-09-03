@@ -22,7 +22,7 @@
     UIImageView     *imageView;
     UITableView     *tableView;
     AFHTTPClient    *httpClient;
-    NSDictionary    *downloadQueue;
+    NSMutableDictionary  *downloadQueue;
     
     NSString        *bundleDocumentDirectoryPath;
     
@@ -39,9 +39,10 @@
     NSTimer         *playbackTimer;
     NSTimer         *downloadTimer;
     
-    NSIndexPath *currentDownloadIndexPath;
-    NSIndexPath *currentPlayingIndexPath;
+    NSIndexPath     *currentDownloadIndexPath;
+    NSIndexPath     *currentPlayingIndexPath;
 
+    NSInteger       downloadPausedCount;
 }
 
 @property (nonatomic, retain) NSMutableArray* songs;
