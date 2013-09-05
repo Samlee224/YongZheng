@@ -200,12 +200,14 @@
     NSMutableURLRequest *request = [[NSMutableURLRequest alloc]initWithURL:url];
     
     //2. Show Network Activity Indicator
-    [(DreamAppAppDelegate *)[[UIApplication sharedApplication] delegate] setNetworkActivityIndicatorVisible: YES];
+    //[(DreamAppAppDelegate *)[[UIApplication sharedApplication] delegate] setNetworkActivityIndicatorVisible: YES];
     
     //3. Create download operation and store metadata
     AFHTTPRequestOperation *operation = [[AFHTTPRequestOperation alloc]initWithRequest:request];
     operation.userInfo = [[NSMutableDictionary alloc]init];
     [operation.userInfo setValue:indexPath forKey:@"indexPath"];
+    
+    song.songPlaybackStatus = SongPlaybackStatusDowlnaoding;
     
     //4. Set file path for store downloaded file
     NSArray *paths = NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSUserDomainMask, YES);
@@ -242,8 +244,11 @@
     //Download complete block
     [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject)
     {
-        //[downloadTimer invalidate];
-        [(DreamAppAppDelegate *)[[UIApplication sharedApplication] delegate] setNetworkActivityIndicatorVisible: NO];
+        //There is a possibility, the cell address had already changed since user may scroll during the downlaod
+        //So, we need to re allocate the cell;
+        SongCell *cell = (SongCell*)[tableView cellForRowAtIndexPath:indexPath];
+        
+        //[(DreamAppAppDelegate *)[[UIApplication sharedApplication] delegate] setNetworkActivityIndicatorVisible: NO];
         
         //Remove progress indicator
         [self removeProgressIndicatorfromcell:indexPath];
@@ -285,7 +290,7 @@
     failure:
      ^(AFHTTPRequestOperation *operation, NSError *error)
     {
-        [(DreamAppAppDelegate *)[[UIApplication sharedApplication] delegate] setNetworkActivityIndicatorVisible: NO];
+        //[(DreamAppAppDelegate *)[[UIApplication sharedApplication] delegate] setNetworkActivityIndicatorVisible: NO];
         
         if (downloadPausedCount > 0) {
             lbl_downlaodStatus.text = @"下载取消";
@@ -303,6 +308,10 @@
     //Progress updating
     [operation setDownloadProgressBlock:^(NSUInteger bytesRead, long long totalBytesRead, long long totalBytesExpectedToRead)
     {
+        //There is a possibility, the cell address had already changed since user may scroll during the downlaod
+        //So, we need to re allocate the cell;
+        SongCell *cell = (SongCell*)[tableView cellForRowAtIndexPath:indexPath];
+        
         float progress = (float)(int)totalBytesRead/(float)(int)totalBytesExpectedToRead;
         
         //Update progress
@@ -312,10 +321,13 @@
             {
                 DACircularProgressView * _progressIndicator = (DACircularProgressView *)oneView;
                 _progressIndicator.progress = progress;
+                
+                if (oneView.tag == LBL_DOWNLOADSTATUS) {
+                    lbl_downlaodStatus.text =
+                    [NSString stringWithFormat: @"%d KB/%d KB", (int)totalBytesRead/1024, (int)totalBytesExpectedToRead/1024];
+                }
             }
         }
-        
-        lbl_downlaodStatus.text = [NSString stringWithFormat: @"%dk/%dk", (int)totalBytesRead/1024, (int)totalBytesExpectedToRead/1024];
     }];
     
 }
@@ -474,7 +486,6 @@
     //Song is not avaliable
     else
     {
-        
         //[self addDownloadButtontocell:indexPath];
         UIButton *but = [UIButton buttonWithType:UIButtonTypeRoundedRect];
         [but setBackgroundImage:[UIImage imageNamed:@"downloadButton.png"] forState:UIControlStateNormal];
@@ -487,6 +498,48 @@
         [songCell.contentView addSubview:but];
     }
     
+    switch (song.songPlaybackStatus) {
+        case SongPlaybackStatusPaused:
+        {
+            //add pause button
+            UIImageView *cellImg = [[UIImageView alloc] initWithFrame:CGRectMake(8, 15, 13, 16)];
+            cellImg.image = [UIImage imageNamed:@"NowPlayingPauseControl~iphone.png"];
+            [songCell.contentView addSubview:cellImg];
+        
+            break;
+        }
+        case SongPlaybackStatusPlaying:
+        {
+            UIImageView *cellImg = [[UIImageView alloc] initWithFrame:CGRectMake(8, 15, 13, 16)];
+            cellImg.image = [UIImage imageNamed:@"nowPlayingGlyph.png"];
+            [songCell.contentView addSubview:cellImg];
+        
+            break;
+            
+        }
+        case SongPlaybackStatusDowlnaoding:
+        {
+            [self addProgressIndicatortocell:indexPath];
+            
+            UILabel *lbl_downlaodStatus = [[UILabel alloc]initWithFrame:CGRectMake(30, 15, 150, 30)];
+            
+            lbl_downlaodStatus.tag = LBL_DOWNLOADSTATUS;
+            //lbl_downlaodStatus.text = @"test";
+            lbl_downlaodStatus.font = [lbl_downlaodStatus.font fontWithSize:10.0];
+            
+            [songCell.contentView addSubview:lbl_downlaodStatus];
+            
+            UIButton *pauseButton = [UIButton buttonWithType:UIButtonTypeCustom];
+            [pauseButton setImage:[UIImage imageNamed:@"downloadProgressButtonPause.png"] forState:UIControlStateNormal];
+            [pauseButton setFrame:CGRectMake(282, 10, 26, 26)];
+            [pauseButton addTarget:self action:@selector(onPauseDownloadButtonClicked:) forControlEvents:UIControlEventTouchUpInside];
+            
+            [songCell.contentView addSubview:pauseButton];
+        }
+        default:
+            break;
+    }
+    
     return songCell;
 }
 
@@ -497,10 +550,13 @@
     currentDownloadIndexPath = [tableView indexPathForCell:cell];
 
     //Get Current Network Status
-    NSString *currentNetWorkStatus = [self GetCurrntNetWorkStatus];
+    //NSString *currentNetWorkStatus = [self GetCurrntNetWorkStatus];
+    
+    AFNetworkReachabilityStatus currentNetWorkStatus = httpClient.networkReachabilityStatus;
+    
     
     //Network Error
-    if (currentNetWorkStatus == nil) {
+    if (currentNetWorkStatus == AFNetworkReachabilityStatusNotReachable) {
         UIAlertView *alert = [[UIAlertView alloc]initWithTitle:@"网络异常" message:@"当前网络无法连接" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles: nil];
         
         [alert show];
@@ -508,7 +564,7 @@
         
     }
     //3G network connected
-    if ([currentNetWorkStatus isEqual: @"3g"]) {
+    if (currentNetWorkStatus == AFNetworkReachabilityStatusReachableViaWWAN) {
         
         UIAlertView *alert = [[UIAlertView alloc]initWithTitle:@"选择网络" message:@"是否使用3G网络下载资源，会产生流量" delegate:self cancelButtonTitle:@"取消" otherButtonTitles:@"使用", nil];
         
@@ -517,7 +573,7 @@
     
     //Wifi network connected
     
-    if ([currentNetWorkStatus isEqual: @"wifi"]) {
+    if (currentNetWorkStatus == AFNetworkReachabilityStatusReachableViaWiFi) {
         
         [self fileDownload:currentDownloadIndexPath];
     }
@@ -567,6 +623,8 @@
     //Different Cell
     else
     {
+        
+        
         [self playOrResumeSong:indexPath At:0];
     }
 }
@@ -590,6 +648,10 @@
     UIImageView *cellImg = [[UIImageView alloc] initWithFrame:CGRectMake(8, 15, 13, 16)];
     cellImg.image = [UIImage imageNamed:@"NowPlayingPauseControl~iphone.png"];
     [cell.contentView addSubview:cellImg];
+    
+    //Update songPlaybackStatus to Paused
+    Song *song = [self.songs objectAtIndex:indexPath.row];
+    song.songPlaybackStatus = SongPlaybackStatusPaused;
 }
 
 
@@ -598,6 +660,9 @@
 {
     [player stop];
     [playbackTimer invalidate];
+    
+    Song *previousSong = [self.songs objectAtIndex:currentPlayingIndexPath.row];
+    previousSong.songPlaybackStatus = SongPlaybackStatusReadytoPlay;
     
     [self removeNowPlayingIndicator:currentPlayingIndexPath];
     
@@ -634,9 +699,12 @@
         player.currentTime = time;
         [self.player play];
         
+        song.songPlaybackStatus = SongPlaybackStatusPlaying;
+        
         //Store currently playing indexPath
         currentPlayingIndexPath = indexPath;
         
+        //remove now playing indicator
         UITableViewCell *cell = [self.tableView cellForRowAtIndexPath:currentPlayingIndexPath];
         for ( UIView *oneView in cell.contentView.subviews) {
             if ([oneView isMemberOfClass:[UIImageView class]])
@@ -675,6 +743,18 @@
     self.currentProgress = value;
     
     [self configureNowPlayingInfo:value];
+}
+
+- (IBAction)onDownloadAllButtonPressed:(id)sender
+{
+    for(Song *song in self.songs)
+    {
+        if (![song.s3Url isEqual: @"(null)"])
+        {
+            NSIndexPath *indexPath = [NSIndexPath indexPathForRow:([song.songNumber integerValue] - 1) inSection:0];
+            [self fileDownload:indexPath];
+        }
+    }
 }
 
 - (void) configureNowPlayingInfo:(float)elapsedPlaybackTime
@@ -734,25 +814,6 @@
     {
         //Do nothing
     }
-}
-
--(NSString*)GetCurrntNetWorkStatus
-{
-    NSString* result;
-    Reachability *r = [Reachability reachabilityWithHostname:@"www.apple.com"];
-    
-    switch ([r currentReachabilityStatus]) {
-        case NotReachable:
-            result=nil;
-            break;
-        case ReachableViaWWAN:// 使用3G网络
-            result=@"3g";
-            break;
-        case ReachableViaWiFi:// 使用WiFi网络
-            result=@"wifi";
-            break;
-    }
-    return result;
 }
 
 @end

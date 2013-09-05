@@ -12,6 +12,7 @@
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
     // Override point for customization after application launch.
+    [[AFNetworkActivityIndicatorManager sharedManager] setEnabled:YES];
     return YES;
 }
 							
@@ -41,23 +42,6 @@
 {
     // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
     
-}
-
-- (void) setNetworkActivityIndicatorVisible:(BOOL)setVisible
-{
-    static NSInteger NumberOfCallsToSetVisible = 0;
-    if (setVisible) {
-        NumberOfCallsToSetVisible++;
-    }
-    else
-    {
-        NumberOfCallsToSetVisible--;
-    }
-    
-    //Assert
-    NSAssert(NumberOfCallsToSetVisible >= 0, @"Network Activity Indicator was asked to hide more often than shown");
-    
-    [[UIApplication sharedApplication] setNetworkActivityIndicatorVisible:(NumberOfCallsToSetVisible > 0)];
 }
 
 @end

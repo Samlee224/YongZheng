@@ -15,5 +15,6 @@
 @synthesize duration;
 @synthesize s3Url;
 @synthesize fileName;
+@synthesize songPlaybackStatus;
 
 @end

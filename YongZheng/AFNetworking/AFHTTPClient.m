@@ -486,10 +486,7 @@ static void AFNetworkReachabilityReleaseCallback(const void *info) {
                     break;
                 case AFJSONParameterEncoding:;
                     [request setValue:[NSString stringWithFormat:@"application/json; charset=%@", charset] forHTTPHeaderField:@"Content-Type"];
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wassign-enum"
-                    [request setHTTPBody:[NSJSONSerialization dataWithJSONObject:parameters options:0 error:&error]];
-#pragma clang diagnostic pop
+                    [request setHTTPBody:[NSJSONSerialization dataWithJSONObject:parameters options:(NSJSONWritingOptions)0 error:&error]];
                     break;
                 case AFPropertyListParameterEncoding:;
                     [request setValue:[NSString stringWithFormat:@"application/x-plist; charset=%@", charset] forHTTPHeaderField:@"Content-Type"];
@@ -1295,11 +1292,9 @@ typedef enum {
     }
 
     if (_phase == AFBodyPhase) {
-        if ([self.inputStream hasBytesAvailable]) {
-            bytesRead += [self.inputStream read:&buffer[bytesRead] maxLength:(length - (NSUInteger)bytesRead)];
-        }
+        bytesRead += [self.inputStream read:&buffer[bytesRead] maxLength:(length - (NSUInteger)bytesRead)];
 
-        if (![self.inputStream hasBytesAvailable]) {
+        if ([self.inputStream streamStatus] >= NSStreamStatusAtEnd) {
             [self transitionToNextPhase];
         }
     }

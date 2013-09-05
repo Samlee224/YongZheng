@@ -14,7 +14,6 @@
 #import "AFHTTPClient.h"
 #import "AFHTTPRequestOperation.h"
 #import "DACircularProgressView.h"
-#import "Reachability.h"
 #import "DreamAppAppDelegate.h"
 
 @interface SonglistViewController: UIViewController <AVAudioPlayerDelegate, UIAlertViewDelegate>
@@ -37,7 +36,6 @@
     NSNumber        *storedProgress;
     
     NSTimer         *playbackTimer;
-    NSTimer         *downloadTimer;
     
     NSIndexPath     *currentDownloadIndexPath;
     NSIndexPath     *currentPlayingIndexPath;
@@ -61,5 +59,6 @@
 @property (strong, nonatomic) IBOutlet UILabel *lbl_songLength;
 
 - (IBAction)onUISliderValueChanged:(UISlider *)sender;
+- (IBAction)onDownloadAllButtonPressed:(id)sender;
 
 @end
