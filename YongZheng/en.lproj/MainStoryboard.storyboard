@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="4488.2" systemVersion="12E55" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" initialViewController="4">
     <dependencies>
-        <deployment defaultVersion="1536" identifier="iOS"/>
+        <deployment version="1536" defaultVersion="1536" identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="3715.3"/>
     </dependencies>
     <scenes>
@@ -9,7 +9,7 @@
         <scene sceneID="bnD-aR-4AP">
             <objects>
                 <navigationController definesPresentationContext="YES" id="5ao-DN-wKI" sceneMemberID="viewController">
-                    <tabBarItem key="tabBarItem" title="Item" id="aWq-ug-drS"/>
+                    <tabBarItem key="tabBarItem" title="Item" image="first.png" id="aWq-ug-drS"/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" id="YQc-Ly-BJF">
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
@@ -30,7 +30,7 @@
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                     </view>
-                    <tabBarItem key="tabBarItem" title="关于" id="McA-DA-axB"/>
+                    <tabBarItem key="tabBarItem" title="关于" image="second.png" id="McA-DA-axB"/>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="ZLE-l2-voL" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
@@ -45,36 +45,36 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <imageView userInteractionEnabled="NO" contentMode="scaleToFill" image="wangyuebo.jpg" id="8Ox-Si-8g1">
-                                <rect key="frame" x="12" y="74" width="60" height="60"/>
+                                <rect key="frame" x="12" y="75" width="60" height="60"/>
                             </imageView>
                             <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" text="雍正剑侠图第一部" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="LZt-kO-FHb">
-                                <rect key="frame" x="80" y="74" width="220" height="21"/>
+                                <rect key="frame" x="80" y="25" width="220" height="21"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
                             <slider opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" minValue="0.0" maxValue="1" id="Adj-dq-E1X">
-                                <rect key="frame" x="48" y="132" width="230" height="34"/>
+                                <rect key="frame" x="42" y="130" width="230" height="34"/>
                                 <rect key="contentStretch" x="1" y="1" width="1" height="1"/>
                                 <connections>
                                     <action selector="onUISliderValueChanged:" destination="2" eventType="valueChanged" id="FFS-DL-JNJ"/>
                                 </connections>
                             </slider>
                             <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" restorationIdentifier="lbl_starttime" text="-:--:--" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="OAv-ec-PwX">
-                                <rect key="frame" x="12" y="138" width="42" height="21"/>
+                                <rect key="frame" x="6" y="137" width="42" height="21"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="10"/>
                                 <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
                             <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" text="-:--:--" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="pjk-US-d4q">
-                                <rect key="frame" x="278" y="143" width="42" height="12"/>
+                                <rect key="frame" x="272" y="143" width="42" height="12"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="10"/>
                                 <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <tableView clipsSubviews="YES" alpha="0.5" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="none" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" id="DBE-lO-aq2">
-                                <rect key="frame" x="0.0" y="167" width="320" height="351"/>
-                                <color key="backgroundColor" cocoaTouchSystemColor="lightTextColor"/>
+                            <tableView clipsSubviews="YES" alpha="0.5" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="none" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" id="DBE-lO-aq2" customClass="SongListViewController">
+                                <rect key="frame" x="0.0" y="166" width="320" height="353"/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <color key="separatorColor" cocoaTouchSystemColor="darkTextColor"/>
                                 <prototypes>
                                     <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="SongCell" id="ubu-b4-4qD" customClass="SongCell">
@@ -83,8 +83,56 @@
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="ubu-b4-4qD" id="uhz-pm-kWz">
                                             <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
                                             <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="雍正剑侠图" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="00X-EP-POI">
+                                                    <rect key="frame" x="27" y="2" width="150" height="22"/>
+                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                    <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                                <button hidden="YES" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="vpS-NO-vKj">
+                                                    <rect key="frame" x="275" y="9" width="25" height="26"/>
+                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="15"/>
+                                                    <state key="normal" image="downloadButton.png">
+                                                        <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                                    </state>
+                                                </button>
+                                                <imageView hidden="YES" userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="nowPlayingGlyph.png" id="uCg-gF-DA7">
+                                                    <rect key="frame" x="4" y="12" width="13" height="16"/>
+                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                </imageView>
+                                                <label hidden="YES" opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="0:00:00" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="KZy-jV-xXq">
+                                                    <rect key="frame" x="273" y="14" width="100" height="15"/>
+                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="10"/>
+                                                    <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                                <label hidden="YES" opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" tag="2" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="downloadStatus" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="8Rt-V5-EIV">
+                                                    <rect key="frame" x="27" y="24" width="150" height="14"/>
+                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="10"/>
+                                                    <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                                <view hidden="YES" contentMode="scaleToFill" id="eAI-Uc-JnJ" customClass="DACircularProgressView">
+                                                    <rect key="frame" x="275" y="7" width="30" height="30"/>
+                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                    <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+                                                </view>
+                                            </subviews>
                                         </tableViewCellContentView>
                                         <color key="tintColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                        <connections>
+                                            <outlet property="bt_downloadOrPause" destination="vpS-NO-vKj" id="ZUd-td-AZK"/>
+                                            <outlet property="cirProgView_downloadProgress" destination="eAI-Uc-JnJ" id="yLz-Hb-nLV"/>
+                                            <outlet property="img_playingStatus" destination="uCg-gF-DA7" id="6lT-34-OOI"/>
+                                            <outlet property="lbl_downloadStatus" destination="8Rt-V5-EIV" id="dke-9z-zkN"/>
+                                            <outlet property="lbl_playbackDuration" destination="KZy-jV-xXq" id="nqC-fP-Xiz"/>
+                                            <outlet property="lbl_songTitle" destination="00X-EP-POI" id="7ne-sW-Dme"/>
+                                        </connections>
                                     </tableViewCell>
                                 </prototypes>
                                 <connections>
@@ -93,7 +141,7 @@
                                 </connections>
                             </tableView>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="yJf-kX-fnU">
-                                <rect key="frame" x="260" y="105" width="46" height="30"/>
+                                <rect key="frame" x="263" y="105" width="46" height="30"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="11"/>
                                 <state key="normal" title="全部下载">
@@ -141,7 +189,11 @@
         </scene>
     </scenes>
     <resources>
+        <image name="downloadButton.png" width="25" height="26"/>
         <image name="first" width="30" height="30"/>
+        <image name="first.png" width="30" height="30"/>
+        <image name="nowPlayingGlyph.png" width="13" height="16"/>
+        <image name="second.png" width="30" height="30"/>
         <image name="wangyuebo.jpg" width="180" height="180"/>
     </resources>
     <simulatedMetricsContainer key="defaultSimulatedMetrics">

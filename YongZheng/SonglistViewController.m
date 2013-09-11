@@ -24,21 +24,13 @@
 - (void)kProgressSlider:(NSTimer*)timer;
 - (IBAction)onUISliderValueChanged:(UISlider *)sender;
 - (void)fileDownload:(NSIndexPath *)indexPath;
-- (void)removeProgressIndicatorfromcell: (NSIndexPath *) indexPath;
-- (void)removeDownloadButtonfromcell:(NSIndexPath *)indexPath;
-- (void)addDownloadButtontocell:(NSIndexPath *)indexPath;
-- (void)addProgressIndicatortocell:(NSIndexPath *)indexPath;
+
 - (void)onDownloadButtonClicked: (id) sender;
 - (void)onPauseDownloadButtonClicked: (id) sender;
-- (void)removeNowPlayingIndicator: (NSIndexPath *)indexPath;
-
 - (void)playOrResumeSong: (NSIndexPath *)indexPath
                       At: (NSTimeInterval)time;
-
 - (void)pauseSong: (NSIndexPath *)indexPath;
 - (void)configureNowPlayingInfo: (float) elapsedPlaybackTime;
-
-
 
 @end 
 			
@@ -66,7 +58,7 @@
     {
         //Copy PlayList.plist from resource path
         NSString *defaultDBPath = [[[NSBundle mainBundle] resourcePath] stringByAppendingPathComponent:@"PlayList.plist"];
-        success = [fileManager copyItemAtPath:defaultDBPath toPath:writableDBPath error:nil];
+        [fileManager copyItemAtPath:defaultDBPath toPath:writableDBPath error:nil];
     }
     
     //Read "PlayList.plist" to prepare create UITableview
@@ -85,16 +77,14 @@
     //4. Setup Audio Session for Background Playback
     AVAudioSession *audioSession = [AVAudioSession sharedInstance];
     [audioSession setCategory:AVAudioSessionCategoryPlayback error:nil];
-    success = [audioSession setActive:YES error:nil];
+    [audioSession setActive:YES error:nil];
     
     //5. Customized progress indicator
     UIImage *progressBarImage = [UIImage imageNamed:@"progressBar.png"];
     [ProgressSlider setThumbImage:progressBarImage forState:UIControlStateNormal];
     [[UIApplication sharedApplication] beginReceivingRemoteControlEvents];
     
-    
     downloadQueue = [[NSMutableDictionary alloc]init];
-
 }
 
 - (void)viewWillAppear:(BOOL)animated
@@ -186,6 +176,8 @@
             song.fileName = [path stringByAppendingFormat:@"/%@.mp3", song.songNumber];
         }
         
+        song.songPlaybackStatus = SongPLaybackStatusWaitforDownload;
+        
         [self.songs addObject:song];
     }
 }
@@ -198,9 +190,6 @@
     
     //1. Create Request
     NSMutableURLRequest *request = [[NSMutableURLRequest alloc]initWithURL:url];
-    
-    //2. Show Network Activity Indicator
-    //[(DreamAppAppDelegate *)[[UIApplication sharedApplication] delegate] setNetworkActivityIndicatorVisible: YES];
     
     //3. Create download operation and store metadata
     AFHTTPRequestOperation *operation = [[AFHTTPRequestOperation alloc]initWithRequest:request];
@@ -218,23 +207,12 @@
     operation.outputStream = [NSOutputStream outputStreamToFileAtPath:filePath append:NO];
     
     //5. Update UI
-    [self addProgressIndicatortocell:indexPath];
-    [self removeDownloadButtonfromcell:indexPath];
-
-    UILabel *lbl_downlaodStatus = [[UILabel alloc]initWithFrame:CGRectMake(30, 15, 150, 30)];
+    cell.bt_downloadOrPause.hidden = YES;
+    cell.cirProgView_downloadProgress.hidden = NO;
+    cell.lbl_downloadStatus.text = @"准备下载";
     
-    lbl_downlaodStatus.tag = LBL_DOWNLOADSTATUS;
-    lbl_downlaodStatus.text = @"准备下载";
-    lbl_downlaodStatus.font = [lbl_downlaodStatus.font fontWithSize:10.0];
-    
-    [cell.contentView addSubview:lbl_downlaodStatus];
-    
-    UIButton *pauseButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    [pauseButton setImage:[UIImage imageNamed:@"downloadProgressButtonPause.png"] forState:UIControlStateNormal];
-    [pauseButton setFrame:CGRectMake(282, 10, 26, 26)];
-    [pauseButton addTarget:self action:@selector(onPauseDownloadButtonClicked:) forControlEvents:UIControlEventTouchUpInside];
-    
-    [cell.contentView addSubview:pauseButton];
+    [cell.bt_downloadOrPause setImage:[UIImage imageNamed:@"downloadProgressButtonPause.png"] forState:UIControlStateNormal];
+    [cell.bt_downloadOrPause addTarget:self action:@selector(onPauseDownloadButtonClicked:) forControlEvents:UIControlEventTouchUpInside];
     
     //6. Add download request to download queue
     [httpClient enqueueHTTPRequestOperation:operation];
@@ -248,13 +226,10 @@
         //So, we need to re allocate the cell;
         SongCell *cell = (SongCell*)[tableView cellForRowAtIndexPath:indexPath];
         
-        //[(DreamAppAppDelegate *)[[UIApplication sharedApplication] delegate] setNetworkActivityIndicatorVisible: NO];
-        
-        //Remove progress indicator
-        [self removeProgressIndicatorfromcell:indexPath];
+        cell.cirProgView_downloadProgress.hidden = YES;
         
         //Add Duration Label
-        lbl_downlaodStatus.text = @"下载完成";
+        cell.lbl_downloadStatus.text = @"下载完成";
         
         NSArray *paths = NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSUserDomainMask, NO);
         NSString *path = [paths objectAtIndex:0];
@@ -264,16 +239,10 @@
         AVAudioPlayer *tempPlayer = [[AVAudioPlayer alloc]initWithContentsOfURL:
                                      [[NSURL alloc]initFileURLWithPath:filePath] error:nil];
         
-        UILabel *lbl_duration = [[UILabel alloc]init];
-        [lbl_duration setFrame:CGRectMake(240, 8, 70, 30)];
-        lbl_duration.text = [self calculateDuration:tempPlayer.duration];
-        lbl_duration.textAlignment = NSTextAlignmentRight;
-        lbl_duration.backgroundColor = [UIColor clearColor];
-        lbl_duration.font = [lbl_duration.font fontWithSize:10.0];
-        [cell.contentView addSubview:lbl_duration];
+        cell.lbl_playbackDuration.text = [self calculateDuration:tempPlayer.duration];
         
         song.s3Url = @"(null)";
-        song.duration = lbl_duration.text;
+        song.duration = cell.lbl_playbackDuration.text;
         
         NSString *plistPath = [bundleDocumentDirectoryPath stringByAppendingString:@"/PlayList.plist"];
         NSMutableDictionary *dictionary = [[NSMutableDictionary alloc] initWithContentsOfFile:plistPath];
@@ -293,16 +262,15 @@
         //[(DreamAppAppDelegate *)[[UIApplication sharedApplication] delegate] setNetworkActivityIndicatorVisible: NO];
         
         if (downloadPausedCount > 0) {
-            lbl_downlaodStatus.text = @"下载取消";
+            cell.lbl_downloadStatus.text = @"下载取消";
         }
         else
         {
-            lbl_downlaodStatus.text = @"下载失败";
+            cell.lbl_downloadStatus.text = @"下载失败";
         }
         
-        //Remove download indicator and add download Button Back
-        [self removeProgressIndicatorfromcell:indexPath];
-        [self addDownloadButtontocell:indexPath];
+        cell.cirProgView_downloadProgress.hidden = NO;
+        cell.bt_downloadOrPause.hidden = NO;
         
     }];
     //Progress updating
@@ -322,92 +290,12 @@
                 DACircularProgressView * _progressIndicator = (DACircularProgressView *)oneView;
                 _progressIndicator.progress = progress;
                 
-                if (oneView.tag == LBL_DOWNLOADSTATUS) {
-                    lbl_downlaodStatus.text =
-                    [NSString stringWithFormat: @"%d KB/%d KB", (int)totalBytesRead/1024, (int)totalBytesExpectedToRead/1024];
-                }
+                cell.lbl_downloadStatus.text = [NSString stringWithFormat: @"%d KB/%d KB", (int)totalBytesRead/1024, (int)totalBytesExpectedToRead/1024];
             }
         }
     }];
     
 }
-
-- (void)removeProgressIndicatorfromcell:(NSIndexPath *)indexPath
-{
-    UITableViewCell *cell = [tableView cellForRowAtIndexPath:indexPath];
-    
-    for (UIView *oneview in  cell.contentView.subviews)
-    {
-        //Remove Progress Indicator
-        if ([oneview isMemberOfClass:[DACircularProgressView class]])
-        {
-            [oneview removeFromSuperview];
-        }
-        //Remove Pause download Button
-        if ([oneview isKindOfClass:[UIButton class]]) {
-            [oneview removeFromSuperview];
-        }
-    }
-    
-}
-
-- (void)removeDownloadButtonfromcell:(NSIndexPath *)indexPath
-{
-    UITableViewCell *cell = [tableView cellForRowAtIndexPath:indexPath];
-    
-    //Remove download button
-    for(UIView *oneView in cell.contentView.subviews)
-    {
-        if ([oneView isKindOfClass:[UIButton class]]) {
-            if (oneView.tag == indexPath.row) {
-            
-                [oneView removeFromSuperview];
-                break;
-            }
-            
-        }
-    }
-}
-
-- (void)addDownloadButtontocell:(NSIndexPath *)indexPath
-{
-    
-    UITableViewCell *cell = [tableView cellForRowAtIndexPath:indexPath];
-    
-    UIButton *but = [UIButton buttonWithType:UIButtonTypeRoundedRect];
-    [but setImage:[UIImage imageNamed:@"downloadButton.png"] forState:UIControlStateNormal];
-    [but setFrame:CGRectMake(280, 8, 30, 30)];
-    
-    [but setTag:indexPath.row];
-    [but addTarget:self action:@selector(onDownloadButtonClicked:) forControlEvents:UIControlEventTouchUpInside];
-    
-    [cell.contentView addSubview:but];
-}
-
-- (void)removeNowPlayingIndicator:(NSIndexPath *)indexPath
-{
-    UITableViewCell *cell = [tableView cellForRowAtIndexPath:indexPath];
-    
-    for (UIView *oneView in cell.contentView.subviews) {
-        
-        if ([oneView isMemberOfClass:[UIImageView class]]) {
-            [oneView removeFromSuperview];
-        }
-    }
-}
-
-- (void)addProgressIndicatortocell:(NSIndexPath *)indexPath
-{
-    DACircularProgressView *progressIndicator = [[DACircularProgressView alloc]initWithFrame:CGRectMake(280.0f, 8.0f, 30.0f, 30.0f)];
-    
-    progressIndicator.roundedCorners = YES;
-    progressIndicator.trackTintColor = [UIColor clearColor];
-    progressIndicator.progressTintColor = [UIColor blueColor];
-    
-    UITableViewCell *cell = [tableView cellForRowAtIndexPath:indexPath];
-    [cell.contentView addSubview:progressIndicator];
-}
-
 
 - (NSString *)calculateDuration:(NSTimeInterval) duration
 {
@@ -454,87 +342,53 @@
 
 -(UITableViewCell *) tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
+    Song *song = [self.songs objectAtIndex:indexPath.row];
     SongCell *songCell = [self.tableView dequeueReusableCellWithIdentifier:@"SongCell"];
     
-    songCell.selectionStyle = UITableViewCellSelectionStyleNone;
+    if (indexPath.row % 2) {
     
-    Song *song = [self.songs objectAtIndex:indexPath.row];
-        
-    for (UIView *subView in songCell.contentView.subviews) {
-        [subView removeFromSuperview];
+        [songCell setBackgroundColor:[UIColor whiteColor]];
     }
-    
-    //Title
-    UILabel *lbl_title = [[UILabel alloc]init];
-    [lbl_title setFrame:CGRectMake(30, 2, 150, 30)];
-    lbl_title.text = song.title;
-    lbl_title.backgroundColor = [UIColor clearColor];
-    lbl_title.font = [lbl_title.font fontWithSize:18.0];
-    [songCell.contentView addSubview:lbl_title];
-    
-    //Song had been downloaded
-    if ([song.s3Url isEqualToString:@"(null)"]) {
-        
-        UILabel *lbl_duration = [[UILabel alloc]init];
-        [lbl_duration setFrame:CGRectMake(240, 8, 70, 30)];
-        lbl_duration.text = song.duration;
-        lbl_duration.textAlignment = NSTextAlignmentRight;
-        lbl_duration.backgroundColor = [UIColor clearColor];
-        lbl_duration.font = [lbl_duration.font fontWithSize:10.0];
-        [songCell.contentView addSubview:lbl_duration];
-    }
-    //Song is not avaliable
     else
     {
-        //[self addDownloadButtontocell:indexPath];
-        UIButton *but = [UIButton buttonWithType:UIButtonTypeRoundedRect];
-        [but setBackgroundImage:[UIImage imageNamed:@"downloadButton.png"] forState:UIControlStateNormal];
-        [but setFrame:CGRectMake(280, 8, 30, 30)];
-       
-        
-        [but setTag:BT_DOWNLOAD];
-        [but addTarget:self action:@selector(onDownloadButtonClicked:) forControlEvents:UIControlEventTouchUpInside];
-        
-        [songCell.contentView addSubview:but];
+        [songCell setBackgroundColor:[UIColor lightGrayColor]];
     }
     
+    songCell.lbl_songTitle.text = song.title;
+    
     switch (song.songPlaybackStatus) {
+        case SongPlaybackStatusReadytoPlay:
+        {
+            songCell.lbl_playbackDuration.hidden = NO;
+            songCell.lbl_playbackDuration.text = song.duration;
+            break;
+        }
+            
+        case 5:
+        {
+            songCell.bt_downloadOrPause.hidden = NO;
+            [songCell.bt_downloadOrPause addTarget:self action:@selector(onDownloadButtonClicked) forControlEvents:UIControlEventTouchUpInside];
+        }
+            
         case SongPlaybackStatusPaused:
         {
-            //add pause button
-            UIImageView *cellImg = [[UIImageView alloc] initWithFrame:CGRectMake(8, 15, 13, 16)];
-            cellImg.image = [UIImage imageNamed:@"NowPlayingPauseControl~iphone.png"];
-            [songCell.contentView addSubview:cellImg];
-        
+            songCell.img_playingStatus.hidden = NO;
+            [songCell.img_playingStatus setImage:[UIImage imageNamed:@"NowPlayingPauseControl~iphone.png"]];
             break;
         }
         case SongPlaybackStatusPlaying:
         {
-            UIImageView *cellImg = [[UIImageView alloc] initWithFrame:CGRectMake(8, 15, 13, 16)];
-            cellImg.image = [UIImage imageNamed:@"nowPlayingGlyph.png"];
-            [songCell.contentView addSubview:cellImg];
-        
+            songCell.img_playingStatus.hidden = NO;
+            [songCell.img_playingStatus setImage:[UIImage imageNamed:@"nowPlayingGlyph.png"]];
             break;
-            
         }
         case SongPlaybackStatusDowlnaoding:
         {
-            [self addProgressIndicatortocell:indexPath];
+            songCell.cirProgView_downloadProgress.hidden = NO;
+            songCell.bt_downloadOrPause.hidden = NO;
             
-            UILabel *lbl_downlaodStatus = [[UILabel alloc]initWithFrame:CGRectMake(30, 15, 150, 30)];
-            
-            lbl_downlaodStatus.tag = LBL_DOWNLOADSTATUS;
-            //lbl_downlaodStatus.text = @"test";
-            lbl_downlaodStatus.font = [lbl_downlaodStatus.font fontWithSize:10.0];
-            
-            [songCell.contentView addSubview:lbl_downlaodStatus];
-            
-            UIButton *pauseButton = [UIButton buttonWithType:UIButtonTypeCustom];
-            [pauseButton setImage:[UIImage imageNamed:@"downloadProgressButtonPause.png"] forState:UIControlStateNormal];
-            [pauseButton setFrame:CGRectMake(282, 10, 26, 26)];
-            [pauseButton addTarget:self action:@selector(onPauseDownloadButtonClicked:) forControlEvents:UIControlEventTouchUpInside];
-            
-            [songCell.contentView addSubview:pauseButton];
+            [songCell.bt_downloadOrPause setImage:[UIImage imageNamed:@"downloadProgressButtonPause.png"] forState:UIControlStateNormal];
+            [songCell.bt_downloadOrPause addTarget:self action:@selector(onPauseDownloadButtonClicked:) forControlEvents:UIControlEventTouchUpInside];
         }
         default:
             break;
@@ -543,17 +397,29 @@
     return songCell;
 }
 
+-(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    //Same Cell
+    if ([indexPath isEqual:currentPlayingIndexPath]) {
+        if (player.isPlaying) {
+            [self pauseSong:indexPath];
+        }
+        else
+        {
+            [self playOrResumeSong:indexPath At:currentProgress];
+        }
+    }
+    //Different Cell
+    else
+    {
+        [self playOrResumeSong:indexPath At:0];
+    }
+}
+
 
 -(void)onDownloadButtonClicked: (id)sender
 {
-    SongCell* cell =(SongCell*) [[[sender superview] superview]superview];
-    currentDownloadIndexPath = [tableView indexPathForCell:cell];
-
-    //Get Current Network Status
-    //NSString *currentNetWorkStatus = [self GetCurrntNetWorkStatus];
-    
     AFNetworkReachabilityStatus currentNetWorkStatus = httpClient.networkReachabilityStatus;
-    
     
     //Network Error
     if (currentNetWorkStatus == AFNetworkReachabilityStatusNotReachable) {
@@ -571,9 +437,9 @@
         [alert show];
     }
     
-    //Wifi network connected
-    
     if (currentNetWorkStatus == AFNetworkReachabilityStatusReachableViaWiFi) {
+        SongCell* cell =(SongCell*) [[[sender superview] superview]superview];
+        currentDownloadIndexPath = [tableView indexPathForCell:cell];
         
         [self fileDownload:currentDownloadIndexPath];
     }
@@ -608,26 +474,7 @@
     
 }
 
--(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
-{
-    //Same Cell
-    if ([indexPath isEqual:currentPlayingIndexPath]) {
-        if (player.isPlaying) {
-            [self pauseSong:indexPath];
-        }
-        else
-        {
-            [self playOrResumeSong:indexPath At:currentProgress];
-        }
-    }
-    //Different Cell
-    else
-    {
-        
-        
-        [self playOrResumeSong:indexPath At:0];
-    }
-}
+
 
 - (void) pauseSong:(NSIndexPath *)indexPath
 {
@@ -636,18 +483,8 @@
     
     currentProgress = player.currentTime;
     
-    UITableViewCell *cell = [self.tableView cellForRowAtIndexPath:currentPlayingIndexPath];
-    for ( UIView *oneView in cell.contentView.subviews) {
-        if ([oneView isMemberOfClass:[UIImageView class]])
-        {
-            [oneView removeFromSuperview];
-        }
-    }
-    
-    //Update UI adding nowplaying indicator, update progress slider
-    UIImageView *cellImg = [[UIImageView alloc] initWithFrame:CGRectMake(8, 15, 13, 16)];
-    cellImg.image = [UIImage imageNamed:@"NowPlayingPauseControl~iphone.png"];
-    [cell.contentView addSubview:cellImg];
+    SongCell *cell = (SongCell*)[self.tableView cellForRowAtIndexPath:currentPlayingIndexPath];
+    [cell.img_playingStatus setImage:[UIImage imageNamed:@"NowPlayingPauseControl~iphone.png"]];
     
     //Update songPlaybackStatus to Paused
     Song *song = [self.songs objectAtIndex:indexPath.row];
@@ -663,8 +500,9 @@
     
     Song *previousSong = [self.songs objectAtIndex:currentPlayingIndexPath.row];
     previousSong.songPlaybackStatus = SongPlaybackStatusReadytoPlay;
+    SongCell *previousCell = (SongCell*)[self.tableView cellForRowAtIndexPath:currentPlayingIndexPath];
     
-    [self removeNowPlayingIndicator:currentPlayingIndexPath];
+    previousCell.img_playingStatus.hidden = YES;
     
     Song *song= [self.songs objectAtIndex:indexPath.row];
     //storedTrack = [NSNumber numberWithInt:indexPath.row];
@@ -704,19 +542,9 @@
         //Store currently playing indexPath
         currentPlayingIndexPath = indexPath;
         
-        //remove now playing indicator
-        UITableViewCell *cell = [self.tableView cellForRowAtIndexPath:currentPlayingIndexPath];
-        for ( UIView *oneView in cell.contentView.subviews) {
-            if ([oneView isMemberOfClass:[UIImageView class]])
-            {
-                [oneView removeFromSuperview];
-            }
-        }
-        
-        //Update UI adding nowplaying indicator, update progress slider
-        UIImageView *cellImg = [[UIImageView alloc] initWithFrame:CGRectMake(8, 15, 13, 16)];
-        cellImg.image = [UIImage imageNamed:@"nowPlayingGlyph.png"];
-        [cell.contentView addSubview:cellImg];
+        SongCell *cell = (SongCell*)[self.tableView cellForRowAtIndexPath:currentPlayingIndexPath];
+        cell.img_playingStatus.hidden = NO;
+        [cell.img_playingStatus setImage:[UIImage imageNamed:@"nowPlayingGlyph.png"]];
         
         //Update Progress Slider
         self.currentProgress = time;

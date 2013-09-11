@@ -11,8 +11,6 @@
 @implementation SongCell
 
 @synthesize songNumber;
-@synthesize songTitle;
-@synthesize playLength;
 
 - (id)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier
 {
