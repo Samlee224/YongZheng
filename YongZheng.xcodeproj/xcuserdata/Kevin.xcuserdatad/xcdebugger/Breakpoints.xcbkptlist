@@ -13,7 +13,7 @@
          endingColumnNumber = "9223372036854775807"
          startingLineNumber = "193"
          endingLineNumber = "193"
-         landmarkName = "-fileDownload::"
+         landmarkName = "-fileDownload:"
          landmarkType = "5">
       </FileBreakpoint>
       <FileBreakpoint
@@ -26,7 +26,7 @@
          endingColumnNumber = "9223372036854775807"
          startingLineNumber = "186"
          endingLineNumber = "186"
-         landmarkName = "-fileDownload::"
+         landmarkName = "-fileDownload:"
          landmarkType = "5">
       </FileBreakpoint>
       <FileBreakpoint
@@ -39,7 +39,7 @@
          endingColumnNumber = "9223372036854775807"
          startingLineNumber = "197"
          endingLineNumber = "197"
-         landmarkName = "-fileDownload::"
+         landmarkName = "-fileDownload:"
          landmarkType = "5">
       </FileBreakpoint>
       <FileBreakpoint
@@ -52,7 +52,7 @@
          endingColumnNumber = "9223372036854775807"
          startingLineNumber = "218"
          endingLineNumber = "218"
-         landmarkName = "-fileDownload::"
+         landmarkName = "-fileDownload:"
          landmarkType = "5">
       </FileBreakpoint>
       <FileBreakpoint
@@ -65,7 +65,7 @@
          endingColumnNumber = "9223372036854775807"
          startingLineNumber = "224"
          endingLineNumber = "224"
-         landmarkName = "-fileDownload::"
+         landmarkName = "-fileDownload:"
          landmarkType = "5">
       </FileBreakpoint>
       <FileBreakpoint
@@ -78,7 +78,7 @@
          endingColumnNumber = "9223372036854775807"
          startingLineNumber = "210"
          endingLineNumber = "210"
-         landmarkName = "-fileDownload::"
+         landmarkName = "-fileDownload:"
          landmarkType = "5">
       </FileBreakpoint>
       <FileBreakpoint
@@ -91,8 +91,8 @@
          endingColumnNumber = "9223372036854775807"
          startingLineNumber = "107"
          endingLineNumber = "107"
-         landmarkName = "-remoteControlReceivedWithEvent:"
-         landmarkType = "5">
+         landmarkName = "@implementation SonglistViewController"
+         landmarkType = "3">
       </FileBreakpoint>
       <FileBreakpoint
          shouldBeEnabled = "No"
@@ -115,7 +115,7 @@
          endingColumnNumber = "9223372036854775807"
          startingLineNumber = "426"
          endingLineNumber = "426"
-         landmarkName = "-tableView:didSelectRowAtIndexPath:"
+         landmarkName = "-onDownloadButtonClicked:"
          landmarkType = "5">
       </FileBreakpoint>
       <FileBreakpoint
@@ -128,7 +128,7 @@
          endingColumnNumber = "9223372036854775807"
          startingLineNumber = "143"
          endingLineNumber = "143"
-         landmarkName = "-fileDownload::"
+         landmarkName = "-remoteControlReceivedWithEvent:"
          landmarkType = "5">
       </FileBreakpoint>
       <FileBreakpoint
@@ -141,7 +141,7 @@
          endingColumnNumber = "9223372036854775807"
          startingLineNumber = "151"
          endingLineNumber = "151"
-         landmarkName = "-fileDownload::"
+         landmarkName = "-initializeSongs"
          landmarkType = "5">
       </FileBreakpoint>
       <FileBreakpoint
@@ -167,7 +167,7 @@
          endingColumnNumber = "9223372036854775807"
          startingLineNumber = "141"
          endingLineNumber = "141"
-         landmarkName = "-fileDownload::"
+         landmarkName = "-remoteControlReceivedWithEvent:"
          landmarkType = "5">
       </FileBreakpoint>
       <FileBreakpoint
@@ -180,7 +180,7 @@
          endingColumnNumber = "9223372036854775807"
          startingLineNumber = "167"
          endingLineNumber = "167"
-         landmarkName = "-fileDownload::"
+         landmarkName = "-initializeSongs"
          landmarkType = "5">
       </FileBreakpoint>
    </FileBreakpoints>

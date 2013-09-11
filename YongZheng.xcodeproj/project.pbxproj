@@ -30,7 +30,6 @@
 		0A5DEDEB17E04D9600B67F3F /* wangyuebo114.png in Resources */ = {isa = PBXBuildFile; fileRef = 0A5DEDE517E04D9600B67F3F /* wangyuebo114.png */; };
 		0A5DEDEE17E04F1800B67F3F /* progressBar.png in Resources */ = {isa = PBXBuildFile; fileRef = 0A5DEDEC17E04F1800B67F3F /* progressBar.png */; };
 		0A5DEDEF17E04F1800B67F3F /* progressBar@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 0A5DEDED17E04F1800B67F3F /* progressBar@2x.png */; };
-		0A5DEDF217E04F3000B67F3F /* Song.m in Sources */ = {isa = PBXBuildFile; fileRef = 0A5DEDF117E04F3000B67F3F /* Song.m */; };
 		0ABD445816A1B5A7004C97B0 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0ABD445716A1B5A7004C97B0 /* UIKit.framework */; };
 		0ABD445A16A1B5A7004C97B0 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0ABD445916A1B5A7004C97B0 /* Foundation.framework */; };
 		0ABD445C16A1B5A7004C97B0 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0ABD445B16A1B5A7004C97B0 /* CoreGraphics.framework */; };
@@ -46,6 +45,7 @@
 		0ABD447B16A1B5A7004C97B0 /* DreamAppSecondViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 0ABD447A16A1B5A7004C97B0 /* DreamAppSecondViewController.m */; };
 		0ABD447D16A1B5A7004C97B0 /* second.png in Resources */ = {isa = PBXBuildFile; fileRef = 0ABD447C16A1B5A7004C97B0 /* second.png */; };
 		0ABD447F16A1B5A7004C97B0 /* second@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 0ABD447E16A1B5A7004C97B0 /* second@2x.png */; };
+		0ABEABB717E05AA800E45219 /* Song.m in Sources */ = {isa = PBXBuildFile; fileRef = 0ABEABB617E05AA800E45219 /* Song.m */; };
 		0ABEF6EC16B62716001898BE /* SongCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 0ABEF6EB16B62716001898BE /* SongCell.m */; };
 		0ABEF6F616B653DB001898BE /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0ABEF6F516B653DB001898BE /* AVFoundation.framework */; };
 		0AD2EC4B16A1BA9200B411A6 /* wangyuebo.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 0AD2EC4A16A1BA9200B411A6 /* wangyuebo.jpg */; };
@@ -100,8 +100,6 @@
 		0A5DEDE517E04D9600B67F3F /* wangyuebo114.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = wangyuebo114.png; sourceTree = "<group>"; };
 		0A5DEDEC17E04F1800B67F3F /* progressBar.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = progressBar.png; sourceTree = "<group>"; };
 		0A5DEDED17E04F1800B67F3F /* progressBar@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "progressBar@2x.png"; sourceTree = "<group>"; };
-		0A5DEDF017E04F3000B67F3F /* Song.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Song.h; path = DACircularProgress/Song.h; sourceTree = "<group>"; };
-		0A5DEDF117E04F3000B67F3F /* Song.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Song.m; path = DACircularProgress/Song.m; sourceTree = "<group>"; };
 		0ABD445316A1B5A7004C97B0 /* YongZheng.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = YongZheng.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		0ABD445716A1B5A7004C97B0 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		0ABD445916A1B5A7004C97B0 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -123,6 +121,8 @@
 		0ABD447A16A1B5A7004C97B0 /* DreamAppSecondViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DreamAppSecondViewController.m; sourceTree = "<group>"; };
 		0ABD447C16A1B5A7004C97B0 /* second.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = second.png; sourceTree = "<group>"; };
 		0ABD447E16A1B5A7004C97B0 /* second@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "second@2x.png"; sourceTree = "<group>"; };
+		0ABEABB517E05AA800E45219 /* Song.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Song.h; sourceTree = "<group>"; };
+		0ABEABB617E05AA800E45219 /* Song.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Song.m; sourceTree = "<group>"; };
 		0ABEF6EA16B62716001898BE /* SongCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SongCell.h; sourceTree = "<group>"; };
 		0ABEF6EB16B62716001898BE /* SongCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SongCell.m; sourceTree = "<group>"; };
 		0ABEF6F516B653DB001898BE /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
@@ -241,8 +241,8 @@
 				59372CF317B28DC100333A1C /* DACircularProgress */,
 				0ABEF6EA16B62716001898BE /* SongCell.h */,
 				0ABEF6EB16B62716001898BE /* SongCell.m */,
-				0A5DEDF017E04F3000B67F3F /* Song.h */,
-				0A5DEDF117E04F3000B67F3F /* Song.m */,
+				0ABEABB517E05AA800E45219 /* Song.h */,
+				0ABEABB617E05AA800E45219 /* Song.m */,
 				0ABD446616A1B5A7004C97B0 /* DreamAppAppDelegate.h */,
 				0ABD446716A1B5A7004C97B0 /* DreamAppAppDelegate.m */,
 				0ABD446F16A1B5A7004C97B0 /* MainStoryboard.storyboard */,
@@ -408,7 +408,7 @@
 				0A18E67017D826B600295FEC /* AFXMLRequestOperation.m in Sources */,
 				0A18E66F17D826B600295FEC /* AFURLConnectionOperation.m in Sources */,
 				0A18E66B17D826B600295FEC /* AFImageRequestOperation.m in Sources */,
-				0A5DEDF217E04F3000B67F3F /* Song.m in Sources */,
+				0ABEABB717E05AA800E45219 /* Song.m in Sources */,
 				0A18E66917D826B600295FEC /* AFHTTPClient.m in Sources */,
 				0ABD447B16A1B5A7004C97B0 /* DreamAppSecondViewController.m in Sources */,
 				0A3E590116A29A1F0077943D /* SonglistViewController.m in Sources */,

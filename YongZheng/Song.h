@@ -8,12 +8,23 @@
 
 #import <Foundation/Foundation.h>
 
-typedef enum {
+/*typedef enum {
+    SongPLaybackStatusWaitforDownload           = -1,
     SongPlaybackStatusReadytoPlay               = 0,
-    SongPlaybackStatusPlaying                   = 1,
-    SongPlaybackStatusPaused                    = 2,
-    SongPlaybackStatusDowlnaoding               = 3,
-} SongPlaybackStatus;
+    SongPlaybackStatusPlaying                   = 2,
+    SongPlaybackStatusPaused                    = 3,
+    SongPlaybackStatusDowlnaoding               = 4,
+} SongPlaybackStatus;*/
+
+typedef enum
+{
+    SongStatusWaitforDownload   = 0,
+    SongStatusReadytoPlay       = 1,
+    SongStatusisPlaying         = 2,
+    SongStatusisPaused          = 3,
+    SongStatusisDownloading     = 4,
+}SongStatus;
+
 
 @interface Song : NSObject
 
@@ -22,6 +33,6 @@ typedef enum {
 @property (nonatomic, strong) NSString *duration;
 @property (nonatomic, strong) NSString *s3Url;
 @property (nonatomic, strong) NSString *fileName;
-@property (nonatomic, assign) SongPlaybackStatus songPlaybackStatus;
+@property (nonatomic, assign) SongStatus songStatus;
 
 @end
