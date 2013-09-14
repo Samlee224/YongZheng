@@ -59,6 +59,7 @@
 @property (strong, nonatomic) IBOutlet UILabel *lbl_songLength;
 
 - (IBAction)onUISliderValueChanged:(UISlider *)sender;
+- (IBAction)onDownloadButtonClicked:(id)sender;
 - (IBAction)onDownloadAllButtonPressed:(id)sender;
 
 @end

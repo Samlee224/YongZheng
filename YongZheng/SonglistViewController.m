@@ -24,14 +24,14 @@
 - (void)kProgressSlider:(NSTimer*)timer;
 - (IBAction)onUISliderValueChanged:(UISlider *)sender;
 - (void)fileDownload:(NSIndexPath *)indexPath;
-- (void)onDownloadButtonClicked: (id) sender;
+- (IBAction)onDownloadButtonClicked: (id) sender;
 - (void)onPauseDownloadButtonClicked: (id) sender;
 - (void)playOrResumeSong: (NSIndexPath *)indexPath
                       At: (NSTimeInterval)time;
 - (void)pauseSong: (NSIndexPath *)indexPath;
 - (void)configureNowPlayingInfo: (float) elapsedPlaybackTime;
 
-@end 
+@end
 			
 @implementation SonglistViewController
 @synthesize tableView;
@@ -155,8 +155,8 @@
     NSString *plistPath = [bundleDocumentDirectoryPath stringByAppendingString:@"/PlayList.plist"];
     NSDictionary *dictionary = [[NSDictionary alloc] initWithContentsOfFile:plistPath];
     
-    for (int i = 1; i< dictionary.count; i++) {
-        
+    for (int i = 1; i< dictionary.count; i++)
+    {
         Song* song = [[Song alloc]init];
         song.songNumber = [NSString stringWithFormat:@"%d", i];
         
@@ -167,15 +167,24 @@
         
         if (i < 3) {
             song.fileName = [[NSBundle mainBundle] pathForResource:song.songNumber ofType:@"mp3"];
+            song.songStatus = SongStatusReadytoPlay;
         }
         else
         {
             NSArray *paths = NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSUserDomainMask, YES);
             NSString *path = [paths objectAtIndex:0];
             song.fileName = [path stringByAppendingFormat:@"/%@.mp3", song.songNumber];
+            
+            NSFileManager *fileManager = [NSFileManager defaultManager];
+            if([fileManager fileExistsAtPath:song.fileName])
+            {
+                song.songStatus = SongStatusReadytoPlay;
+            }
+            else
+            {
+                song.songStatus = SongStatusWaitforDownload;
+            }
         }
-        
-        song.songStatus = SongStatusWaitforDownload;
         
         [self.songs addObject:song];
     }
@@ -206,8 +215,9 @@
     operation.outputStream = [NSOutputStream outputStreamToFileAtPath:filePath append:NO];
     
     //5. Update UI
-    cell.bt_downloadOrPause.hidden = YES;
     cell.cirProgView_downloadProgress.hidden = NO;
+    cell.cirProgView_downloadProgress.progressTintColor = [UIColor blueColor];
+    cell.lbl_downloadStatus.hidden = NO;
     cell.lbl_downloadStatus.text = @"准备下载";
     
     [cell.bt_downloadOrPause setImage:[UIImage imageNamed:@"downloadProgressButtonPause.png"] forState:UIControlStateNormal];
@@ -226,6 +236,7 @@
         SongCell *cell = (SongCell*)[tableView cellForRowAtIndexPath:indexPath];
         
         cell.cirProgView_downloadProgress.hidden = YES;
+        cell.bt_downloadOrPause.hidden = YES;
         
         //Add Duration Label
         cell.lbl_downloadStatus.text = @"下载完成";
@@ -235,13 +246,19 @@
         NSString *fileName = [NSString stringWithFormat:@"/%d.mp3", (indexPath.row + 1)];
         NSString *filePath = [path stringByAppendingString:fileName];
         
-        AVAudioPlayer *tempPlayer = [[AVAudioPlayer alloc]initWithContentsOfURL:
-                                     [[NSURL alloc]initFileURLWithPath:filePath] error:nil];
+        NSError *err;
         
+        AVAudioPlayer *tempPlayer = [[AVAudioPlayer alloc]initWithContentsOfURL:
+                                     [[NSURL alloc]initFileURLWithPath:filePath] error:&err];
+        NSLog(@"%@", err);
+        
+        cell.lbl_playbackDuration.hidden = NO;
         cell.lbl_playbackDuration.text = [self calculateDuration:tempPlayer.duration];
         
         song.s3Url = @"(null)";
         song.duration = cell.lbl_playbackDuration.text;
+        
+        song.songStatus = SongStatusReadytoPlay;
         
         NSString *plistPath = [bundleDocumentDirectoryPath stringByAppendingString:@"/PlayList.plist"];
         NSMutableDictionary *dictionary = [[NSMutableDictionary alloc] initWithContentsOfFile:plistPath];
@@ -258,8 +275,6 @@
     failure:
      ^(AFHTTPRequestOperation *operation, NSError *error)
     {
-        //[(DreamAppAppDelegate *)[[UIApplication sharedApplication] delegate] setNetworkActivityIndicatorVisible: NO];
-        
         if (downloadPausedCount > 0) {
             cell.lbl_downloadStatus.text = @"下载取消";
         }
@@ -268,8 +283,12 @@
             cell.lbl_downloadStatus.text = @"下载失败";
         }
         
-        cell.cirProgView_downloadProgress.hidden = NO;
+        cell.cirProgView_downloadProgress.hidden = YES;
         cell.bt_downloadOrPause.hidden = NO;
+        
+        //Todo add download img and selector
+        
+        song.songStatus = SongStatusWaitforDownload;
         
     }];
     //Progress updating
@@ -279,19 +298,10 @@
         //So, we need to re allocate the cell;
         SongCell *cell = (SongCell*)[tableView cellForRowAtIndexPath:indexPath];
         
-        float progress = (float)(int)totalBytesRead/(float)(int)totalBytesExpectedToRead;
-        
         //Update progress
-        for(UIView *oneView in cell.contentView.subviews)
-        {
-            if ([oneView isMemberOfClass:[DACircularProgressView class]])
-            {
-                DACircularProgressView * _progressIndicator = (DACircularProgressView *)oneView;
-                _progressIndicator.progress = progress;
-                
-                cell.lbl_downloadStatus.text = [NSString stringWithFormat: @"%d KB/%d KB", (int)totalBytesRead/1024, (int)totalBytesExpectedToRead/1024];
-            }
-        }
+        cell.cirProgView_downloadProgress.progress = (float)(int)totalBytesRead/(float)(int)totalBytesExpectedToRead;
+        
+        cell.lbl_downloadStatus.text = [NSString stringWithFormat: @"%d KB/%d KB", (int)totalBytesRead/1024, (int)totalBytesExpectedToRead/1024];
     }];
     
 }
@@ -328,7 +338,7 @@
     
 }
 
--(void)onDownloadButtonClicked: (id)sender
+- (IBAction)onDownloadButtonClicked:(id)sender
 {
     AFNetworkReachabilityStatus currentNetWorkStatus = httpClient.networkReachabilityStatus;
     
@@ -359,6 +369,7 @@
 - (void)onPauseDownloadButtonClicked: (id) sender
 {
     SongCell *cell =(SongCell*) [[[sender superview] superview] superview];
+    cell.lbl_downloadStatus.text = @"下载暂停";
     
     NSIndexPath *pausedIndexPath = [tableView indexPathForCell:cell];
     
@@ -383,6 +394,9 @@
 
 -(UITableViewCell *) tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
+    
+    
+    
     Song *song = [self.songs objectAtIndex:indexPath.row];
     SongCell *songCell = [self.tableView dequeueReusableCellWithIdentifier:@"SongCell"];
     
@@ -392,7 +406,7 @@
     }
     else
     {
-        [songCell setBackgroundColor:[UIColor lightGrayColor]];
+        [songCell setBackgroundColor:[UIColor colorWithRed:.1 green:.1 blue:.1 alpha:.1]];
     }
     
     songCell.lbl_songTitle.text = song.title;
@@ -407,7 +421,8 @@
         case SongStatusWaitforDownload:
         {
             songCell.bt_downloadOrPause.hidden = NO;
-            [songCell.bt_downloadOrPause addTarget:self action:@selector(onDownloadButtonClicked) forControlEvents:UIControlEventTouchUpInside];
+            //[songCell.bt_downloadOrPause addTarget:self action:@selector(onDownloadButtonClicked) forControlEvents:UIControlEventTouchUpInside];
+            
             break;
         }
             
