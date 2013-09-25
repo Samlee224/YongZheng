@@ -11,12 +11,6 @@
 #import "Song.h"
 #import "DACircularProgressView.h"
 
-#define LBL_SONGTITLE       1
-#define LBL_DOWNLOADSTATUS  2
-#define LBL_Duration        3
-#define BT_DOWNLOAD         4
-#define BT_PAUSE            5
-
 @interface SonglistViewController ()
 
 - (NSString *)calculateDuration:(NSTimeInterval) duration;
@@ -269,6 +263,7 @@
         [songArray setObject:song.duration forKey:@"Duration"];
         //[songArray setObject:song.fileName forKey:@"FileName"];
         
+        
         [dictionary writeToFile:plistPath atomically:NO];
     }
     //Failed
@@ -286,7 +281,7 @@
         cell.cirProgView_downloadProgress.hidden = YES;
         cell.bt_downloadOrPause.hidden = NO;
         
-        //Todo add download img and selector
+        [cell.bt_downloadOrPause setImage:[UIImage imageNamed:@"downloadButton.png"] forState:UIControlStateNormal];
         
         song.songStatus = SongStatusWaitforDownload;
         
@@ -300,7 +295,6 @@
         
         //Update progress
         cell.cirProgView_downloadProgress.progress = (float)(int)totalBytesRead/(float)(int)totalBytesExpectedToRead;
-        
         cell.lbl_downloadStatus.text = [NSString stringWithFormat: @"%d KB/%d KB", (int)totalBytesRead/1024, (int)totalBytesExpectedToRead/1024];
     }];
     
@@ -394,11 +388,8 @@
 
 -(UITableViewCell *) tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    
-    
-    
     Song *song = [self.songs objectAtIndex:indexPath.row];
-    SongCell *songCell = [self.tableView dequeueReusableCellWithIdentifier:@"SongCell"];
+    SongCell *songCell = [self.tableView dequeueReusableCellWithIdentifier:@"SongCell" forIndexPath:indexPath];
     
     if (indexPath.row % 2) {
     
@@ -406,9 +397,16 @@
     }
     else
     {
-        [songCell setBackgroundColor:[UIColor colorWithRed:.1 green:.1 blue:.1 alpha:.1]];
+        [songCell setBackgroundColor:[UIColor colorWithRed:.1 green:.1 blue:.1 alpha:0.0]];
     }
     
+    //Clar existing content
+    for (UIView* oneView in songCell.contentView.subviews) {
+        oneView.hidden = YES;
+    }
+    
+    //Configure Cell
+    songCell.lbl_songTitle.hidden = NO;
     songCell.lbl_songTitle.text = song.title;
     
     switch (song.songStatus) {
@@ -421,20 +419,20 @@
         case SongStatusWaitforDownload:
         {
             songCell.bt_downloadOrPause.hidden = NO;
-            //[songCell.bt_downloadOrPause addTarget:self action:@selector(onDownloadButtonClicked) forControlEvents:UIControlEventTouchUpInside];
-            
             break;
         }
             
         case SongStatusisPaused:
         {
             songCell.img_playingStatus.hidden = NO;
+            songCell.lbl_playbackDuration.hidden = NO;
             [songCell.img_playingStatus setImage:[UIImage imageNamed:@"NowPlayingPauseControl~iphone.png"]];
             break;
         }
         case SongStatusisPlaying:
         {
             songCell.img_playingStatus.hidden = NO;
+            songCell.lbl_playbackDuration.hidden = NO;
             [songCell.img_playingStatus setImage:[UIImage imageNamed:@"nowPlayingGlyph.png"]];
             break;
         }
@@ -472,9 +470,6 @@
     }
 }
 
-
-
-
 - (void)kProgressSlider:(NSTimer*)timer
 {
     self.ProgressSlider.value += 0.01;
@@ -489,8 +484,6 @@
     }
     
 }
-
-
 
 - (void) pauseSong:(NSIndexPath *)indexPath
 {
@@ -527,21 +520,12 @@
     //[ud setObject:storedTrack forKey:@"storedTrack"];
     //[ud synchronize];
     
-    
+    SongCell *cell = (SongCell*)[self.tableView cellForRowAtIndexPath:indexPath];
     //if song is downloaded than play, otherwize show popup and notice to download.
     if (![song.s3Url isEqual: @"(null)"])
     {
-        //NSData *fileUrl=[[NSData alloc]initWithContentsOfURL:[NSURL URLWithString:song.s3Url]];
-        
-        //self.player = [[AVAudioPlayer alloc]initWithData:fileUrl error:nil];
-        
-        //[self.player play];
-        
-        //NSURL *url = [NSURL URLWithString:song.s3Url];
-        
-        //NSData *data = [NSData dataWithContentsOfURL:url];
-        
-        //self.player = [[AVAudioPlayer alloc] initWithData:data error:nil];
+        cell.lbl_downloadStatus.hidden = NO;
+        cell.lbl_downloadStatus.text = @"请先下载";
     }
     else
     {
@@ -558,7 +542,7 @@
         //Store currently playing indexPath
         currentPlayingIndexPath = indexPath;
         
-        SongCell *cell = (SongCell*)[self.tableView cellForRowAtIndexPath:currentPlayingIndexPath];
+        
         cell.img_playingStatus.hidden = NO;
         [cell.img_playingStatus setImage:[UIImage imageNamed:@"nowPlayingGlyph.png"]];
         

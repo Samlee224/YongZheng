@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="4488.2" systemVersion="12E55" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" initialViewController="4">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="4510" systemVersion="12F37" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" initialViewController="4">
     <dependencies>
         <deployment version="1536" defaultVersion="1536" identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="3715.3"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="3742"/>
     </dependencies>
     <scenes>
-        <!--Navigation Controller - Item-->
+        <!--Navigation Controller - 播放列表-->
         <scene sceneID="bnD-aR-4AP">
             <objects>
                 <navigationController definesPresentationContext="YES" id="5ao-DN-wKI" sceneMemberID="viewController">
-                    <tabBarItem key="tabBarItem" title="Item" image="first.png" id="aWq-ug-drS"/>
+                    <tabBarItem key="tabBarItem" title="播放列表" image="first.png" id="aWq-ug-drS"/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" id="YQc-Ly-BJF">
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
@@ -21,20 +21,56 @@
             </objects>
             <point key="canvasLocation" x="116" y="-271"/>
         </scene>
-        <!--View Controller - 关于-->
+        <!--View Controller - 关于本App-->
         <scene sceneID="7PK-Ot-AO7">
             <objects>
                 <viewController id="uXO-Ga-t3v" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="1hw-Bo-LPK">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                        <subviews>
+                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" lineBreakMode="tailTruncation" numberOfLines="10" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="Bos-xX-py6">
+                                <rect key="frame" x="36" y="247" width="248" height="248"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <string key="text">王玥波，评书和相声演员，代表作包括《聊斋》、《隋唐》、《雍正剑侠图》。
+
+本App为雍正剑侠图第一部电台版录音。
+
+Enjoy it, Peace out.</string>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="wangyuebo.jpg" id="fAg-vk-2ll">
+                                <rect key="frame" x="96" y="88" width="128" height="128"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                            </imageView>
+                        </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                     </view>
                     <tabBarItem key="tabBarItem" title="关于" image="second.png" id="McA-DA-axB"/>
+                    <navigationItem key="navigationItem" title="关于本App" id="iYF-KV-I7o"/>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="ZLE-l2-voL" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="116" y="425"/>
+            <point key="canvasLocation" x="645" y="435"/>
+        </scene>
+        <!--Navigation Controller - Item-->
+        <scene sceneID="OUS-of-b8m">
+            <objects>
+                <navigationController definesPresentationContext="YES" id="2e6-Ob-bqI" sceneMemberID="viewController">
+                    <tabBarItem key="tabBarItem" title="Item" id="GvW-Ld-nN2"/>
+                    <navigationItem key="navigationItem" id="xgV-3x-tiU"/>
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="xiN-gn-CYa">
+                        <autoresizingMask key="autoresizingMask"/>
+                    </navigationBar>
+                    <connections>
+                        <segue destination="uXO-Ga-t3v" kind="relationship" relationship="rootViewController" id="UGf-tM-bqd"/>
+                    </connections>
+                </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="JhQ-D0-TVV" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="116" y="435"/>
         </scene>
         <!--Songlist View Controller - First-->
         <scene sceneID="11">
@@ -72,16 +108,17 @@
                                 <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <tableView clipsSubviews="YES" alpha="0.5" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="none" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" id="DBE-lO-aq2" customClass="SongListViewController">
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" id="DBE-lO-aq2" customClass="SongListViewController">
                                 <rect key="frame" x="0.0" y="166" width="320" height="353"/>
-                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                <color key="separatorColor" cocoaTouchSystemColor="darkTextColor"/>
+                                <color key="backgroundColor" red="0.12864934120819871" green="0.60405517498177641" blue="1" alpha="0.10000000000000001" colorSpace="calibratedRGB"/>
+                                <color key="separatorColor" red="0.0" green="0.47843137250000001" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                                <color key="sectionIndexColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                                 <prototypes>
-                                    <tableViewCell alpha="0.49999999999999961" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="SongCell" id="ubu-b4-4qD" customClass="SongCell">
+                                    <tableViewCell alpha="0.49999999999999961" contentMode="scaleToFill" selectionStyle="blue" indentationWidth="10" reuseIdentifier="SongCell" id="ubu-b4-4qD" customClass="SongCell">
                                         <rect key="frame" x="0.0" y="22" width="320" height="44"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="ubu-b4-4qD" id="uhz-pm-kWz">
-                                            <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="320" height="43"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="雍正剑侠图" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="00X-EP-POI">
@@ -91,17 +128,6 @@
                                                     <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
-                                                <button hidden="YES" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="vpS-NO-vKj">
-                                                    <rect key="frame" x="275" y="9" width="25" height="26"/>
-                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                                    <fontDescription key="fontDescription" type="system" pointSize="15"/>
-                                                    <state key="normal" image="downloadButton.png">
-                                                        <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
-                                                    </state>
-                                                    <connections>
-                                                        <action selector="onDownloadButtonClicked:" destination="2" eventType="touchUpInside" id="Eec-fF-yNy"/>
-                                                    </connections>
-                                                </button>
                                                 <imageView hidden="YES" userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="nowPlayingGlyph.png" id="uCg-gF-DA7">
                                                     <rect key="frame" x="6" y="14" width="13" height="16"/>
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
@@ -121,8 +147,21 @@
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                                 <view hidden="YES" contentMode="scaleToFill" id="eAI-Uc-JnJ" customClass="DACircularProgressView">
-                                                    <rect key="frame" x="272" y="7" width="30" height="30"/>
+                                                    <rect key="frame" x="274" y="2" width="32" height="35"/>
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                    <subviews>
+                                                        <button hidden="YES" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="vpS-NO-vKj">
+                                                            <rect key="frame" x="1" y="5" width="30" height="30"/>
+                                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                            <fontDescription key="fontDescription" type="system" pointSize="15"/>
+                                                            <state key="normal" backgroundImage="downloadButton.png">
+                                                                <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                                            </state>
+                                                            <connections>
+                                                                <action selector="onDownloadButtonClicked:" destination="2" eventType="touchUpInside" id="Eec-fF-yNy"/>
+                                                            </connections>
+                                                        </button>
+                                                    </subviews>
                                                     <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                                                 </view>
                                             </subviews>
@@ -183,7 +222,7 @@
                     </tabBar>
                     <connections>
                         <segue destination="5ao-DN-wKI" kind="relationship" relationship="viewControllers" id="mPk-IK-GST"/>
-                        <segue destination="uXO-Ga-t3v" kind="relationship" relationship="viewControllers" id="Asg-aT-pbz"/>
+                        <segue destination="2e6-Ob-bqI" kind="relationship" relationship="viewControllers" id="n1v-iV-FWp"/>
                     </connections>
                 </tabBarController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="14" sceneMemberID="firstResponder"/>
