@@ -33,6 +33,7 @@
 @synthesize player;
 @synthesize ProgressSlider;
 @synthesize currentProgress;
+@synthesize bt_downloadAll;
 
 @synthesize songDurationinHour, songDurationinMinute, songDurationinSecond;
 
@@ -76,6 +77,11 @@
     UIImage *progressBarImage = [UIImage imageNamed:@"progressBar.png"];
     [ProgressSlider setThumbImage:progressBarImage forState:UIControlStateNormal];
     [[UIApplication sharedApplication] beginReceivingRemoteControlEvents];
+    
+    bt_downloadAll.layer.borderWidth = 1;
+    [bt_downloadAll.layer setCornerRadius:8.];
+    bt_downloadAll.layer.borderColor = [bt_downloadAll.titleLabel.textColor CGColor];
+    //[[UIColor ]CGColor];
     
     downloadQueue = [[NSMutableDictionary alloc]init];
 }
@@ -419,6 +425,8 @@
         case SongStatusWaitforDownload:
         {
             songCell.bt_downloadOrPause.hidden = NO;
+            //songCell.bt_downloadOrPause.layer.borderWidth = 1;
+            //songCell.bt_downloadOrPause.layer.borderColor = [[UIColor brownColor] CGColor];
             break;
         }
             
@@ -443,6 +451,8 @@
             
             [songCell.bt_downloadOrPause setImage:[UIImage imageNamed:@"downloadProgressButtonPause.png"] forState:UIControlStateNormal];
             [songCell.bt_downloadOrPause addTarget:self action:@selector(onPauseDownloadButtonClicked:) forControlEvents:UIControlEventTouchUpInside];
+            songCell.lbl_downloadStatus.hidden = NO;
+            
             break;
         }
         default:

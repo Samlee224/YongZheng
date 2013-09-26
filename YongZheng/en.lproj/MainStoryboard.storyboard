@@ -149,21 +149,19 @@ Enjoy it, Peace out.</string>
                                                 <view hidden="YES" contentMode="scaleToFill" id="eAI-Uc-JnJ" customClass="DACircularProgressView">
                                                     <rect key="frame" x="274" y="2" width="32" height="35"/>
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                                    <subviews>
-                                                        <button hidden="YES" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="vpS-NO-vKj">
-                                                            <rect key="frame" x="1" y="5" width="30" height="30"/>
-                                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                                            <fontDescription key="fontDescription" type="system" pointSize="15"/>
-                                                            <state key="normal" backgroundImage="downloadButton.png">
-                                                                <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
-                                                            </state>
-                                                            <connections>
-                                                                <action selector="onDownloadButtonClicked:" destination="2" eventType="touchUpInside" id="Eec-fF-yNy"/>
-                                                            </connections>
-                                                        </button>
-                                                    </subviews>
                                                     <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                                                 </view>
+                                                <button hidden="YES" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="vpS-NO-vKj">
+                                                    <rect key="frame" x="274" y="5" width="30" height="30"/>
+                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="15"/>
+                                                    <state key="normal" backgroundImage="downloadButton.png">
+                                                        <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                                    </state>
+                                                    <connections>
+                                                        <action selector="onDownloadButtonClicked:" destination="2" eventType="touchUpInside" id="Eec-fF-yNy"/>
+                                                    </connections>
+                                                </button>
                                             </subviews>
                                         </tableViewCellContentView>
                                         <color key="tintColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
@@ -183,12 +181,10 @@ Enjoy it, Peace out.</string>
                                 </connections>
                             </tableView>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="yJf-kX-fnU">
-                                <rect key="frame" x="263" y="105" width="46" height="30"/>
+                                <rect key="frame" x="259" y="113" width="52" height="22"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="11"/>
-                                <state key="normal" title="全部下载">
-                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
-                                </state>
+                                <state key="normal" title="全部下载"/>
                                 <connections>
                                     <action selector="onDownloadAllButtonPressed:" destination="2" eventType="touchUpInside" id="96j-kG-sT6"/>
                                 </connections>
@@ -200,6 +196,7 @@ Enjoy it, Peace out.</string>
                     <navigationItem key="navigationItem" title="播放列表" id="XHc-vb-uTo"/>
                     <connections>
                         <outlet property="ProgressSlider" destination="Adj-dq-E1X" id="xTM-R2-uaf"/>
+                        <outlet property="bt_downloadAll" destination="yJf-kX-fnU" id="bNG-UH-7rb"/>
                         <outlet property="lbl_currentProgress" destination="OAv-ec-PwX" id="yem-KU-rAb"/>
                         <outlet property="lbl_songLength" destination="pjk-US-d4q" id="ULI-xc-O7I"/>
                         <outlet property="tableView" destination="DBE-lO-aq2" id="mRi-ll-Fuu"/>

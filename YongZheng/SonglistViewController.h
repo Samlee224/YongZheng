@@ -11,6 +11,7 @@
 #import <AudioToolbox/AudioToolbox.h>
 #import <MediaPlayer/MediaPlayer.h>
 #import <CoreMedia/CMTime.h>
+#import <QuartzCore/QuartzCore.h>
 #import "AFHTTPClient.h"
 #import "AFHTTPRequestOperation.h"
 #import "DACircularProgressView.h"
@@ -56,7 +57,8 @@
 @property (nonatomic, retain) NSTimer *timer;
 
 @property (retain, nonatomic) IBOutlet UILabel *lbl_currentProgress;
-@property (strong, nonatomic) IBOutlet UILabel *lbl_songLength;
+@property (retain, nonatomic) IBOutlet UILabel *lbl_songLength;
+@property (retain, nonatomic) IBOutlet UIButton *bt_downloadAll;
 
 - (IBAction)onUISliderValueChanged:(UISlider *)sender;
 - (IBAction)onDownloadButtonClicked:(id)sender;
