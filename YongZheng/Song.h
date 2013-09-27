@@ -8,13 +8,6 @@
 
 #import <Foundation/Foundation.h>
 
-/*typedef enum {
-    SongPLaybackStatusWaitforDownload           = -1,
-    SongPlaybackStatusReadytoPlay               = 0,
-    SongPlaybackStatusPlaying                   = 2,
-    SongPlaybackStatusPaused                    = 3,
-    SongPlaybackStatusDowlnaoding               = 4,
-} SongPlaybackStatus;*/
 
 typedef enum
 {
@@ -23,6 +16,7 @@ typedef enum
     SongStatusisPlaying         = 2,
     SongStatusisPaused          = 3,
     SongStatusisDownloading     = 4,
+    SongStatusinDownloadQueue   = 5,
 }SongStatus;
 
 

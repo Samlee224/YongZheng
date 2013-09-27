@@ -24,6 +24,7 @@
                       At: (NSTimeInterval)time;
 - (void)pauseSong: (NSIndexPath *)indexPath;
 - (void)configureNowPlayingInfo: (float) elapsedPlaybackTime;
+- (void)onPauseDownloadAllButtonPressed;
 
 @end
 			
@@ -81,7 +82,7 @@
     bt_downloadAll.layer.borderWidth = 1;
     [bt_downloadAll.layer setCornerRadius:8.];
     bt_downloadAll.layer.borderColor = [bt_downloadAll.titleLabel.textColor CGColor];
-    //[[UIColor ]CGColor];
+    //[bt_downloadAll addTarget:self action:@selector(onDownloadAllButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
     
     downloadQueue = [[NSMutableDictionary alloc]init];
 }
@@ -204,7 +205,7 @@
     operation.userInfo = [[NSMutableDictionary alloc]init];
     [operation.userInfo setValue:indexPath forKey:@"indexPath"];
     
-    song.songStatus = SongStatusisDownloading;
+    song.songStatus = SongStatusinDownloadQueue;
     
     //4. Set file path for store downloaded file
     NSArray *paths = NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSUserDomainMask, YES);
@@ -220,7 +221,7 @@
     cell.lbl_downloadStatus.hidden = NO;
     cell.lbl_downloadStatus.text = @"准备下载";
     
-    [cell.bt_downloadOrPause setImage:[UIImage imageNamed:@"downloadProgressButtonPause.png"] forState:UIControlStateNormal];
+    [cell.bt_downloadOrPause setBackgroundImage:[UIImage imageNamed:@"downloadProgressButtonPause.png"] forState:UIControlStateNormal];
     [cell.bt_downloadOrPause addTarget:self action:@selector(onPauseDownloadButtonClicked:) forControlEvents:UIControlEventTouchUpInside];
     
     //6. Add download request to download queue
@@ -241,7 +242,8 @@
         //Add Duration Label
         cell.lbl_downloadStatus.text = @"下载完成";
         
-        NSArray *paths = NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSUserDomainMask, NO);
+        NSArray *paths = NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSUserDomainMask, YES);
+        //NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
         NSString *path = [paths objectAtIndex:0];
         NSString *fileName = [NSString stringWithFormat:@"/%d.mp3", (indexPath.row + 1)];
         NSString *filePath = [path stringByAppendingString:fileName];
@@ -287,7 +289,7 @@
         cell.cirProgView_downloadProgress.hidden = YES;
         cell.bt_downloadOrPause.hidden = NO;
         
-        [cell.bt_downloadOrPause setImage:[UIImage imageNamed:@"downloadButton.png"] forState:UIControlStateNormal];
+        [cell.bt_downloadOrPause setBackgroundImage:[UIImage imageNamed:@"downloadButton.png"] forState:UIControlStateNormal];
         
         song.songStatus = SongStatusWaitforDownload;
         
@@ -295,6 +297,8 @@
     //Progress updating
     [operation setDownloadProgressBlock:^(NSUInteger bytesRead, long long totalBytesRead, long long totalBytesExpectedToRead)
     {
+        song.songStatus = SongStatusisDownloading;
+        
         //There is a possibility, the cell address had already changed since user may scroll during the downlaod
         //So, we need to re allocate the cell;
         SongCell *cell = (SongCell*)[tableView cellForRowAtIndexPath:indexPath];
@@ -411,6 +415,7 @@
         oneView.hidden = YES;
     }
     
+    
     //Configure Cell
     songCell.lbl_songTitle.hidden = NO;
     songCell.lbl_songTitle.text = song.title;
@@ -425,8 +430,8 @@
         case SongStatusWaitforDownload:
         {
             songCell.bt_downloadOrPause.hidden = NO;
-            //songCell.bt_downloadOrPause.layer.borderWidth = 1;
-            //songCell.bt_downloadOrPause.layer.borderColor = [[UIColor brownColor] CGColor];
+            [songCell.bt_downloadOrPause setBackgroundImage:[UIImage imageNamed:@"downloadButton.png"] forState:UIControlStateNormal];
+            [songCell.bt_downloadOrPause addTarget:self action:@selector(onDownloadButtonClicked:) forControlEvents:UIControlEventTouchUpInside];
             break;
         }
             
@@ -449,12 +454,23 @@
             songCell.cirProgView_downloadProgress.hidden = NO;
             songCell.bt_downloadOrPause.hidden = NO;
             
-            [songCell.bt_downloadOrPause setImage:[UIImage imageNamed:@"downloadProgressButtonPause.png"] forState:UIControlStateNormal];
+            [songCell.bt_downloadOrPause setBackgroundImage:[UIImage imageNamed:@"downloadProgressButtonPause.png"] forState:UIControlStateNormal];
             [songCell.bt_downloadOrPause addTarget:self action:@selector(onPauseDownloadButtonClicked:) forControlEvents:UIControlEventTouchUpInside];
             songCell.lbl_downloadStatus.hidden = NO;
             
             break;
         }
+        case SongStatusinDownloadQueue:
+        {
+            songCell.bt_downloadOrPause.hidden = NO;
+            
+            [songCell.bt_downloadOrPause setBackgroundImage:[UIImage imageNamed:@"downloadProgressButtonPause.png"] forState:UIControlStateNormal];
+            [songCell.bt_downloadOrPause addTarget:self action:@selector(onPauseDownloadButtonClicked:) forControlEvents:UIControlEventTouchUpInside];
+            songCell.lbl_downloadStatus.hidden = NO;
+            songCell.lbl_downloadStatus.text = @"准备下载";
+            break;
+        }
+            
         default:
             break;
     }
@@ -593,6 +609,23 @@
             [self fileDownload:indexPath];
         }
     }
+    
+    [bt_downloadAll setTitle:@"全部暂停" forState:UIControlStateNormal];
+    
+    [bt_downloadAll removeTarget:self action:@selector(onDownloadAllButtonPressed) forControlEvents:UIControlEventTouchUpInside];
+    
+    [bt_downloadAll addTarget:self action:@selector(onPauseDownloadAllButtonPressed) forControlEvents:UIControlEventTouchUpInside];
+}
+
+- (void) onPauseDownloadAllButtonPressed
+{
+    for (AFHTTPRequestOperation *operation in downloadQueue) {
+        [operation cancel];
+    }
+    
+    [bt_downloadAll setTitle:@"全部下载" forState:UIControlStateNormal];;
+    [bt_downloadAll removeTarget:self action:@selector(onPauseDownloadButtonClicked) forControlEvents:UIControlEventTouchUpInside];
+    [bt_downloadAll addTarget:self action:@selector(onDownloadAllButtonPressed) forControlEvents:UIControlEventTouchUpInside];
 }
 
 - (void) configureNowPlayingInfo:(float)elapsedPlaybackTime

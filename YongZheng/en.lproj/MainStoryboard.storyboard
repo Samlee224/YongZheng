@@ -186,7 +186,7 @@ Enjoy it, Peace out.</string>
                                 <fontDescription key="fontDescription" type="system" pointSize="11"/>
                                 <state key="normal" title="全部下载"/>
                                 <connections>
-                                    <action selector="onDownloadAllButtonPressed:" destination="2" eventType="touchUpInside" id="96j-kG-sT6"/>
+                                    <action selector="onDownloadAllButtonPressed:" destination="2" eventType="touchUpInside" id="2TD-62-HFx"/>
                                 </connections>
                             </button>
                         </subviews>
