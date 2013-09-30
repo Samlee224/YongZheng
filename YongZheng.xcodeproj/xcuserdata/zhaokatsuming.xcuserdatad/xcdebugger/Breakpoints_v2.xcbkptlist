@@ -10,11 +10,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "YongZheng/SonglistViewController.m"
-            timestampString = "401876788.797847"
+            timestampString = "402216203.658872"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "728"
-            endingLineNumber = "728">
+            startingLineNumber = "745"
+            endingLineNumber = "745">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -38,11 +38,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "YongZheng/SonglistViewController.m"
-            timestampString = "401876788.797847"
+            timestampString = "402216203.658872"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "735"
-            endingLineNumber = "735">
+            startingLineNumber = "752"
+            endingLineNumber = "752">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -52,11 +52,57 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "YongZheng/SonglistViewController.m"
-            timestampString = "401876788.797847"
+            timestampString = "402216203.658872"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "734"
-            endingLineNumber = "734">
+            startingLineNumber = "751"
+            endingLineNumber = "751">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "YongZheng/SonglistViewController.m"
+            timestampString = "402216203.658872"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "617"
+            endingLineNumber = "617"
+            landmarkName = "-onDownloadAllButtonPressed:"
+            landmarkType = "5">
+            <Locations>
+               <Location
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "-[SonglistViewController onDownloadAllButtonPressed:]"
+                  moduleName = "YongZheng"
+                  urlString = "file://localhost/Users/zhaokatsuming/YongZheng/YongZheng/SonglistViewController.m"
+                  timestampString = "402216233.533022"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "617"
+                  endingLineNumber = "617"
+                  offsetFromSymbolStart = "66">
+               </Location>
+               <Location
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "-[SonglistViewController onDownloadAllButtonPressed:]"
+                  moduleName = "YongZheng"
+                  urlString = "file://localhost/Users/zhaokatsuming/YongZheng/YongZheng/SonglistViewController.m"
+                  timestampString = "402216233.533241"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "617"
+                  endingLineNumber = "617"
+                  offsetFromSymbolStart = "684">
+               </Location>
+            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -66,87 +112,41 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "YongZheng/SonglistViewController.m"
-            timestampString = "401876788.797847"
+            timestampString = "402216203.658872"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "604"
-            endingLineNumber = "604"
-            landmarkName = "-onDownloadAllButtonPressed:"
-            landmarkType = "5">
-            <Locations>
-               <Location
-                  shouldBeEnabled = "No"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "-[SonglistViewController onDownloadAllButtonPressed:]"
-                  moduleName = "YongZheng"
-                  urlString = "file://localhost/Users/zhaokatsuming/YongZheng/YongZheng/SonglistViewController.m"
-                  timestampString = "401876467.347417"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "604"
-                  endingLineNumber = "604"
-                  offsetFromSymbolStart = "66">
-               </Location>
-               <Location
-                  shouldBeEnabled = "No"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "-[SonglistViewController onDownloadAllButtonPressed:]"
-                  moduleName = "YongZheng"
-                  urlString = "file://localhost/Users/zhaokatsuming/YongZheng/YongZheng/SonglistViewController.m"
-                  timestampString = "401876467.347649"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "604"
-                  endingLineNumber = "604"
-                  offsetFromSymbolStart = "632">
-               </Location>
-            </Locations>
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "YongZheng/SonglistViewController.m"
-            timestampString = "401876788.797847"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "622"
-            endingLineNumber = "622"
+            startingLineNumber = "637"
+            endingLineNumber = "637"
             landmarkName = "-onPauseDownloadAllButtonPressed"
             landmarkType = "5">
             <Locations>
                <Location
-                  shouldBeEnabled = "Yes"
+                  shouldBeEnabled = "No"
                   ignoreCount = "0"
                   continueAfterRunningActions = "No"
                   symbolName = "-[SonglistViewController onPauseDownloadAllButtonPressed]"
                   moduleName = "YongZheng"
                   urlString = "file://localhost/Users/zhaokatsuming/YongZheng/YongZheng/SonglistViewController.m"
-                  timestampString = "401876868.917034"
+                  timestampString = "402213499.650709"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
                   startingLineNumber = "622"
                   endingLineNumber = "622"
-                  offsetFromSymbolStart = "46">
+                  offsetFromSymbolStart = "54">
                </Location>
                <Location
-                  shouldBeEnabled = "Yes"
+                  shouldBeEnabled = "No"
                   ignoreCount = "0"
                   continueAfterRunningActions = "No"
                   symbolName = "-[SonglistViewController onPauseDownloadAllButtonPressed]"
                   moduleName = "YongZheng"
                   urlString = "file://localhost/Users/zhaokatsuming/YongZheng/YongZheng/SonglistViewController.m"
-                  timestampString = "401876868.917267"
+                  timestampString = "402213499.650967"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
                   startingLineNumber = "622"
                   endingLineNumber = "622"
-                  offsetFromSymbolStart = "324">
+                  offsetFromSymbolStart = "576">
                </Location>
             </Locations>
          </BreakpointContent>
@@ -158,11 +158,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "YongZheng/SonglistViewController.m"
-            timestampString = "401875877.660727"
+            timestampString = "402216203.658872"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "458"
-            endingLineNumber = "458"
+            startingLineNumber = "469"
+            endingLineNumber = "469"
             landmarkName = "-tableView:cellForRowAtIndexPath:"
             landmarkType = "5">
          </BreakpointContent>
@@ -170,15 +170,15 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            shouldBeEnabled = "Yes"
+            shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "YongZheng/SonglistViewController.m"
-            timestampString = "401876788.797847"
+            timestampString = "402216203.658872"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "613"
-            endingLineNumber = "613"
+            startingLineNumber = "626"
+            endingLineNumber = "626"
             landmarkName = "-onDownloadAllButtonPressed:"
             landmarkType = "5">
          </BreakpointContent>
@@ -190,12 +190,44 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "YongZheng/SonglistViewController.m"
-            timestampString = "401876788.797847"
+            timestampString = "402216203.658872"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "608"
-            endingLineNumber = "608"
+            startingLineNumber = "621"
+            endingLineNumber = "621"
             landmarkName = "-onDownloadAllButtonPressed:"
+            landmarkType = "5">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "YongZheng/SonglistViewController.m"
+            timestampString = "402216203.658872"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "381"
+            endingLineNumber = "381"
+            landmarkName = "-onPauseDownloadButtonClicked:"
+            landmarkType = "5">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "YongZheng/SonglistViewController.m"
+            timestampString = "402216203.658872"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "293"
+            endingLineNumber = "293"
+            landmarkName = "-fileDownload:"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>

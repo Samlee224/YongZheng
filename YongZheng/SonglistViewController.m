@@ -82,7 +82,6 @@
     bt_downloadAll.layer.borderWidth = 1;
     [bt_downloadAll.layer setCornerRadius:8.];
     bt_downloadAll.layer.borderColor = [bt_downloadAll.titleLabel.textColor CGColor];
-    //[bt_downloadAll addTarget:self action:@selector(onDownloadAllButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
     
     downloadQueue = [[NSMutableDictionary alloc]init];
 }
@@ -216,10 +215,13 @@
     operation.outputStream = [NSOutputStream outputStreamToFileAtPath:filePath append:NO];
     
     //5. Update UI
+    cell.cirProgView_downloadProgress.progress = 0;
     cell.cirProgView_downloadProgress.hidden = NO;
     cell.cirProgView_downloadProgress.progressTintColor = [UIColor blueColor];
     cell.lbl_downloadStatus.hidden = NO;
     cell.lbl_downloadStatus.text = @"准备下载";
+    
+    [cell.bt_downloadOrPause removeTarget:self action:@selector(onDownloadButtonClicked:) forControlEvents:UIControlEventTouchUpInside];
     
     [cell.bt_downloadOrPause setBackgroundImage:[UIImage imageNamed:@"downloadProgressButtonPause.png"] forState:UIControlStateNormal];
     [cell.bt_downloadOrPause addTarget:self action:@selector(onPauseDownloadButtonClicked:) forControlEvents:UIControlEventTouchUpInside];
@@ -243,7 +245,6 @@
         cell.lbl_downloadStatus.text = @"下载完成";
         
         NSArray *paths = NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSUserDomainMask, YES);
-        //NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
         NSString *path = [paths objectAtIndex:0];
         NSString *fileName = [NSString stringWithFormat:@"/%d.mp3", (indexPath.row + 1)];
         NSString *filePath = [path stringByAppendingString:fileName];
@@ -289,9 +290,16 @@
         cell.cirProgView_downloadProgress.hidden = YES;
         cell.bt_downloadOrPause.hidden = NO;
         
+        [cell.bt_downloadOrPause removeTarget:self action:@selector(onPauseDownloadButtonClicked:) forControlEvents:UIControlEventTouchUpInside];
+        
         [cell.bt_downloadOrPause setBackgroundImage:[UIImage imageNamed:@"downloadButton.png"] forState:UIControlStateNormal];
         
+        [cell.bt_downloadOrPause addTarget:self action:@selector(onDownloadButtonClicked:)
+                          forControlEvents:UIControlEventTouchUpInside];
+        
         song.songStatus = SongStatusWaitforDownload;
+        
+        //Todo: need to remove downlaod failed file
         
     }];
     //Progress updating
@@ -430,6 +438,9 @@
         case SongStatusWaitforDownload:
         {
             songCell.bt_downloadOrPause.hidden = NO;
+            
+            [songCell.bt_downloadOrPause removeTarget:self action:@selector(onPauseDownloadButtonClicked:) forControlEvents:UIControlEventTouchUpInside];
+            
             [songCell.bt_downloadOrPause setBackgroundImage:[UIImage imageNamed:@"downloadButton.png"] forState:UIControlStateNormal];
             [songCell.bt_downloadOrPause addTarget:self action:@selector(onDownloadButtonClicked:) forControlEvents:UIControlEventTouchUpInside];
             break;
@@ -454,6 +465,8 @@
             songCell.cirProgView_downloadProgress.hidden = NO;
             songCell.bt_downloadOrPause.hidden = NO;
             
+            [songCell.bt_downloadOrPause removeTarget:self action:@selector(onDownloadButtonClicked:) forControlEvents:UIControlEventTouchUpInside];
+            
             [songCell.bt_downloadOrPause setBackgroundImage:[UIImage imageNamed:@"downloadProgressButtonPause.png"] forState:UIControlStateNormal];
             [songCell.bt_downloadOrPause addTarget:self action:@selector(onPauseDownloadButtonClicked:) forControlEvents:UIControlEventTouchUpInside];
             songCell.lbl_downloadStatus.hidden = NO;
@@ -463,6 +476,8 @@
         case SongStatusinDownloadQueue:
         {
             songCell.bt_downloadOrPause.hidden = NO;
+            
+            [songCell.bt_downloadOrPause removeTarget:self action:@selector(onDownloadButtonClicked:) forControlEvents:UIControlEventTouchUpInside];
             
             [songCell.bt_downloadOrPause setBackgroundImage:[UIImage imageNamed:@"downloadProgressButtonPause.png"] forState:UIControlStateNormal];
             [songCell.bt_downloadOrPause addTarget:self action:@selector(onPauseDownloadButtonClicked:) forControlEvents:UIControlEventTouchUpInside];
@@ -612,20 +627,24 @@
     
     [bt_downloadAll setTitle:@"全部暂停" forState:UIControlStateNormal];
     
-    [bt_downloadAll removeTarget:self action:@selector(onDownloadAllButtonPressed) forControlEvents:UIControlEventTouchUpInside];
+    [bt_downloadAll removeTarget:self action:@selector(onDownloadAllButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
     
-    [bt_downloadAll addTarget:self action:@selector(onPauseDownloadAllButtonPressed) forControlEvents:UIControlEventTouchUpInside];
+    [bt_downloadAll addTarget:self action:@selector(onPauseDownloadAllButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
 }
 
 - (void) onPauseDownloadAllButtonPressed
 {
-    for (AFHTTPRequestOperation *operation in downloadQueue) {
+    for (NSString *key in downloadQueue)
+    {
+        downloadPausedCount++;
+        
+        AFHTTPRequestOperation *operation = [downloadQueue valueForKey:key];
         [operation cancel];
     }
     
     [bt_downloadAll setTitle:@"全部下载" forState:UIControlStateNormal];;
-    [bt_downloadAll removeTarget:self action:@selector(onPauseDownloadButtonClicked) forControlEvents:UIControlEventTouchUpInside];
-    [bt_downloadAll addTarget:self action:@selector(onDownloadAllButtonPressed) forControlEvents:UIControlEventTouchUpInside];
+    [bt_downloadAll removeTarget:self action:@selector(onPauseDownloadButtonClicked:) forControlEvents:UIControlEventTouchUpInside];
+    [bt_downloadAll addTarget:self action:@selector(onDownloadAllButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
 }
 
 - (void) configureNowPlayingInfo:(float)elapsedPlaybackTime
