@@ -24,7 +24,7 @@
                       At: (NSTimeInterval)time;
 - (void)pauseSong: (NSIndexPath *)indexPath;
 - (void)configureNowPlayingInfo: (float) elapsedPlaybackTime;
-- (void)onPauseDownloadAllButtonPressed;
+- (void)onPauseDownloadAllButtonPressed:(id)sender;
 
 @end
 			
@@ -105,7 +105,7 @@
     [self resignFirstResponder];
 }
 
-- (void) remoteControlReceivedWithEvent:(UIEvent *)event
+- (void)remoteControlReceivedWithEvent:(UIEvent *)event
 {
     if (event.type == UIEventTypeRemoteControl) {
         switch (event.subtype) {
@@ -207,9 +207,11 @@
     song.songStatus = SongStatusinDownloadQueue;
     
     //4. Set file path for store downloaded file
-    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSUserDomainMask, YES);
-    NSString *path = [paths objectAtIndex:0];
-    NSString *fileName = [NSString stringWithFormat:@"/%d.mp3", (indexPath.row + 1)];
+    //NSArray *paths = NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSUserDomainMask, YES);
+    //NSString *path = [paths objectAtIndex:0];
+    NSString *path = NSTemporaryDirectory();
+    
+    NSString *fileName = [NSString stringWithFormat:@"%d.mp3", (indexPath.row + 1)];
     NSString *filePath = [path stringByAppendingString:fileName];
     
     operation.outputStream = [NSOutputStream outputStreamToFileAtPath:filePath append:NO];
@@ -218,8 +220,7 @@
     cell.cirProgView_downloadProgress.progress = 0;
     cell.cirProgView_downloadProgress.hidden = NO;
     cell.cirProgView_downloadProgress.progressTintColor = [UIColor blueColor];
-    cell.lbl_downloadStatus.hidden = NO;
-    cell.lbl_downloadStatus.text = @"准备下载";
+    cell.lbl_songStatus.text = @"准备下载";
     
     [cell.bt_downloadOrPause removeTarget:self action:@selector(onDownloadButtonClicked:) forControlEvents:UIControlEventTouchUpInside];
     
@@ -242,18 +243,30 @@
         cell.bt_downloadOrPause.hidden = YES;
         
         //Add Duration Label
-        cell.lbl_downloadStatus.text = @"下载完成";
+        cell.lbl_songStatus.text = @"下载完成";
         
-        NSArray *paths = NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSUserDomainMask, YES);
-        NSString *path = [paths objectAtIndex:0];
-        NSString *fileName = [NSString stringWithFormat:@"/%d.mp3", (indexPath.row + 1)];
+        //NSArray *paths = NSSearchPathForDirectoriesInDomains(NSTemporaryDirectory(), NSUserDomainMask, YES);
+        //NSString *path = [paths objectAtIndex:0];
+        NSString *path = NSTemporaryDirectory();
+        
+        NSString *fileName = [NSString stringWithFormat:@"%d.mp3", (indexPath.row + 1)];
         NSString *filePath = [path stringByAppendingString:fileName];
         
-        NSError *err;
+        NSArray *despaths = NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSUserDomainMask, YES);
+        NSString *despath = [despaths objectAtIndex:0];
+        NSString *desfileName = [NSString stringWithFormat:@"/%d.mp3", (indexPath.row + 1)];
+        NSString *desfilePath = [despath stringByAppendingString:desfileName];
+        
+        
+        NSFileManager *fileManager = [NSFileManager defaultManager];
+        
+        
+        [fileManager copyItemAtPath:filePath toPath:desfilePath error:nil];
+        [fileManager removeItemAtPath:filePath error:nil];
+        
         
         AVAudioPlayer *tempPlayer = [[AVAudioPlayer alloc]initWithContentsOfURL:
-                                     [[NSURL alloc]initFileURLWithPath:filePath] error:&err];
-        NSLog(@"%@", err);
+                                     [[NSURL alloc]initFileURLWithPath:desfilePath] error:nil];
         
         cell.lbl_playbackDuration.hidden = NO;
         cell.lbl_playbackDuration.text = [self calculateDuration:tempPlayer.duration];
@@ -274,17 +287,19 @@
         
         
         [dictionary writeToFile:plistPath atomically:NO];
+        
+        [downloadQueue removeObjectForKey:[NSString stringWithFormat:@"%d", indexPath.row]];
     }
     //Failed
     failure:
      ^(AFHTTPRequestOperation *operation, NSError *error)
     {
         if (downloadPausedCount > 0) {
-            cell.lbl_downloadStatus.text = @"下载取消";
+            cell.lbl_songStatus.text = @"下载取消";
         }
         else
         {
-            cell.lbl_downloadStatus.text = @"下载失败";
+            cell.lbl_songStatus.text = @"下载失败";
         }
         
         cell.cirProgView_downloadProgress.hidden = YES;
@@ -299,7 +314,10 @@
         
         song.songStatus = SongStatusWaitforDownload;
         
-        //Todo: need to remove downlaod failed file
+        NSFileManager *fileManager = [NSFileManager defaultManager];
+        
+        [fileManager removeItemAtPath:filePath error:nil];
+        [downloadQueue removeObjectForKey:[NSString stringWithFormat:@"%d", indexPath.row]];
         
     }];
     //Progress updating
@@ -313,7 +331,7 @@
         
         //Update progress
         cell.cirProgView_downloadProgress.progress = (float)(int)totalBytesRead/(float)(int)totalBytesExpectedToRead;
-        cell.lbl_downloadStatus.text = [NSString stringWithFormat: @"%d KB/%d KB", (int)totalBytesRead/1024, (int)totalBytesExpectedToRead/1024];
+        cell.lbl_songStatus.text = [NSString stringWithFormat: @"%d KB/%d KB", (int)totalBytesRead/1024, (int)totalBytesExpectedToRead/1024];
     }];
     
 }
@@ -354,6 +372,9 @@
 {
     AFNetworkReachabilityStatus currentNetWorkStatus = httpClient.networkReachabilityStatus;
     
+    SongCell* cell =(SongCell*) [[[sender superview] superview]superview];
+    currentDownloadIndexPath = [tableView indexPathForCell:cell];
+    
     //Network Error
     if (currentNetWorkStatus == AFNetworkReachabilityStatusNotReachable) {
         UIAlertView *alert = [[UIAlertView alloc]initWithTitle:@"网络异常" message:@"当前网络无法连接" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles: nil];
@@ -370,18 +391,17 @@
         [alert show];
     }
     
-    if (currentNetWorkStatus == AFNetworkReachabilityStatusReachableViaWiFi) {
-        SongCell* cell =(SongCell*) [[[sender superview] superview]superview];
-        currentDownloadIndexPath = [tableView indexPathForCell:cell];
-        
+    if (currentNetWorkStatus == AFNetworkReachabilityStatusReachableViaWiFi) {        
         [self fileDownload:currentDownloadIndexPath];
+        [cell.bt_downloadOrPause removeTarget:self action:@selector(onDownloadButtonClicked:) forControlEvents:UIControlEventTouchUpInside];
+        [cell.bt_downloadOrPause addTarget:self action:@selector(onPauseDownloadButtonClicked:) forControlEvents:UIControlEventTouchUpInside];
     }
 }
 
 - (void)onPauseDownloadButtonClicked: (id) sender
 {
     SongCell *cell =(SongCell*) [[[sender superview] superview] superview];
-    cell.lbl_downloadStatus.text = @"下载暂停";
+    cell.lbl_songStatus.text = @"下载暂停";
     
     NSIndexPath *pausedIndexPath = [tableView indexPathForCell:cell];
     
@@ -390,6 +410,42 @@
     downloadPausedCount++;
     
     [operation cancel];
+}
+
+- (IBAction)onDownloadAllButtonPressed:(id)sender
+{
+    for(Song *song in self.songs)
+    {
+        if (![song.s3Url isEqual: @"(null)"])
+        {
+            NSIndexPath *indexPath = [NSIndexPath indexPathForRow:([song.songNumber integerValue] - 1) inSection:0];
+            NSString *key = [NSString stringWithFormat:@"%d", ([song.songNumber integerValue] - 1)];
+            
+            AFHTTPRequestOperation *operation = [downloadQueue valueForKey:key];
+            if (!operation) {
+                [self fileDownload:indexPath];
+            }
+        }
+    }
+    
+    [bt_downloadAll setTitle:@"全部暂停" forState:UIControlStateNormal];
+    [bt_downloadAll removeTarget:self action:@selector(onDownloadAllButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
+    [bt_downloadAll addTarget:self action:@selector(onPauseDownloadAllButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
+}
+
+- (void) onPauseDownloadAllButtonPressed:(id)sender
+{
+    for (NSString *key in downloadQueue)
+    {
+        downloadPausedCount++;
+        
+        AFHTTPRequestOperation *operation = [downloadQueue valueForKey:key];
+        [operation cancel];
+    }
+    
+    [bt_downloadAll setTitle:@"全部下载" forState:UIControlStateNormal];;
+    [bt_downloadAll removeTarget:self action:@selector(onPauseDownloadButtonClicked:) forControlEvents:UIControlEventTouchUpInside];
+    [bt_downloadAll addTarget:self action:@selector(onDownloadAllButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
 }
 
 
@@ -427,12 +483,15 @@
     //Configure Cell
     songCell.lbl_songTitle.hidden = NO;
     songCell.lbl_songTitle.text = song.title;
+    songCell.lbl_songStatus.hidden = NO;
     
     switch (song.songStatus) {
         case SongStatusReadytoPlay:
         {
             songCell.lbl_playbackDuration.hidden = NO;
             songCell.lbl_playbackDuration.text = song.duration;
+            songCell.lbl_songStatus.text = @"准备播放";
+            
             break;
         }
         case SongStatusWaitforDownload:
@@ -443,6 +502,8 @@
             
             [songCell.bt_downloadOrPause setBackgroundImage:[UIImage imageNamed:@"downloadButton.png"] forState:UIControlStateNormal];
             [songCell.bt_downloadOrPause addTarget:self action:@selector(onDownloadButtonClicked:) forControlEvents:UIControlEventTouchUpInside];
+            songCell.lbl_songStatus.text = @"等待下载";
+            
             break;
         }
             
@@ -451,6 +512,7 @@
             songCell.img_playingStatus.hidden = NO;
             songCell.lbl_playbackDuration.hidden = NO;
             [songCell.img_playingStatus setImage:[UIImage imageNamed:@"NowPlayingPauseControl~iphone.png"]];
+            songCell.lbl_songStatus.text = @"播放暂停";
             break;
         }
         case SongStatusisPlaying:
@@ -458,6 +520,7 @@
             songCell.img_playingStatus.hidden = NO;
             songCell.lbl_playbackDuration.hidden = NO;
             [songCell.img_playingStatus setImage:[UIImage imageNamed:@"nowPlayingGlyph.png"]];
+            songCell.lbl_songStatus.text = @"正在播放";
             break;
         }
         case SongStatusisDownloading:
@@ -469,7 +532,6 @@
             
             [songCell.bt_downloadOrPause setBackgroundImage:[UIImage imageNamed:@"downloadProgressButtonPause.png"] forState:UIControlStateNormal];
             [songCell.bt_downloadOrPause addTarget:self action:@selector(onPauseDownloadButtonClicked:) forControlEvents:UIControlEventTouchUpInside];
-            songCell.lbl_downloadStatus.hidden = NO;
             
             break;
         }
@@ -481,8 +543,7 @@
             
             [songCell.bt_downloadOrPause setBackgroundImage:[UIImage imageNamed:@"downloadProgressButtonPause.png"] forState:UIControlStateNormal];
             [songCell.bt_downloadOrPause addTarget:self action:@selector(onPauseDownloadButtonClicked:) forControlEvents:UIControlEventTouchUpInside];
-            songCell.lbl_downloadStatus.hidden = NO;
-            songCell.lbl_downloadStatus.text = @"准备下载";
+            songCell.lbl_songStatus.text = @"准备下载";
             break;
         }
             
@@ -565,8 +626,7 @@
     //if song is downloaded than play, otherwize show popup and notice to download.
     if (![song.s3Url isEqual: @"(null)"])
     {
-        cell.lbl_downloadStatus.hidden = NO;
-        cell.lbl_downloadStatus.text = @"请先下载";
+        cell.lbl_songStatus.text = @"请先下载";
     }
     else
     {
@@ -614,38 +674,7 @@
     [self configureNowPlayingInfo:value];
 }
 
-- (IBAction)onDownloadAllButtonPressed:(id)sender
-{
-    for(Song *song in self.songs)
-    {
-        if (![song.s3Url isEqual: @"(null)"])
-        {
-            NSIndexPath *indexPath = [NSIndexPath indexPathForRow:([song.songNumber integerValue] - 1) inSection:0];
-            [self fileDownload:indexPath];
-        }
-    }
-    
-    [bt_downloadAll setTitle:@"全部暂停" forState:UIControlStateNormal];
-    
-    [bt_downloadAll removeTarget:self action:@selector(onDownloadAllButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
-    
-    [bt_downloadAll addTarget:self action:@selector(onPauseDownloadAllButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
-}
 
-- (void) onPauseDownloadAllButtonPressed
-{
-    for (NSString *key in downloadQueue)
-    {
-        downloadPausedCount++;
-        
-        AFHTTPRequestOperation *operation = [downloadQueue valueForKey:key];
-        [operation cancel];
-    }
-    
-    [bt_downloadAll setTitle:@"全部下载" forState:UIControlStateNormal];;
-    [bt_downloadAll removeTarget:self action:@selector(onPauseDownloadButtonClicked:) forControlEvents:UIControlEventTouchUpInside];
-    [bt_downloadAll addTarget:self action:@selector(onDownloadAllButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
-}
 
 - (void) configureNowPlayingInfo:(float)elapsedPlaybackTime
 {
@@ -699,6 +728,11 @@
     //Button OK
     if (buttonIndex == 1) {
         [self fileDownload:currentDownloadIndexPath];
+        
+        SongCell *cell = (SongCell*)[self.tableView cellForRowAtIndexPath:currentDownloadIndexPath];
+        
+        [cell.bt_downloadOrPause removeTarget:self action:@selector(onDownloadButtonClicked:) forControlEvents:UIControlEventTouchUpInside];
+        [cell.bt_downloadOrPause addTarget:self action:@selector(onPauseDownloadButtonClicked:) forControlEvents:UIControlEventTouchUpInside];
     }
     else
     {
