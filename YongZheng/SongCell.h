@@ -11,7 +11,7 @@
 
 @interface SongCell : UITableViewCell
 
-@property (nonatomic, strong) IBOutlet UILabel      *songNumber;
+@property (nonatomic, strong) IBOutlet UILabel      *lbl_songNumber;
 @property (nonatomic, strong) IBOutlet UILabel      *lbl_songTitle;
 @property (nonatomic, strong) IBOutlet UILabel      *lbl_playbackDuration;
 @property (nonatomic, strong) IBOutlet UILabel      *lbl_songStatus;

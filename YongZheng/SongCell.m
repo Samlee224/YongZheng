@@ -10,7 +10,7 @@
 
 @implementation SongCell
 
-@synthesize songNumber;
+//@synthesize songNumber;
 
 - (id)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier
 {

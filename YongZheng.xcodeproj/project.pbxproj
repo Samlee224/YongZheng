@@ -31,9 +31,6 @@
 		0ABD446216A1B5A7004C97B0 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 0ABD446016A1B5A7004C97B0 /* InfoPlist.strings */; };
 		0ABD446416A1B5A7004C97B0 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 0ABD446316A1B5A7004C97B0 /* main.m */; };
 		0ABD446816A1B5A7004C97B0 /* DreamAppAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 0ABD446716A1B5A7004C97B0 /* DreamAppAppDelegate.m */; };
-		0ABD446A16A1B5A7004C97B0 /* Default.png in Resources */ = {isa = PBXBuildFile; fileRef = 0ABD446916A1B5A7004C97B0 /* Default.png */; };
-		0ABD446C16A1B5A7004C97B0 /* Default@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 0ABD446B16A1B5A7004C97B0 /* Default@2x.png */; };
-		0ABD446E16A1B5A7004C97B0 /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 0ABD446D16A1B5A7004C97B0 /* Default-568h@2x.png */; };
 		0ABD447116A1B5A7004C97B0 /* MainStoryboard.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 0ABD446F16A1B5A7004C97B0 /* MainStoryboard.storyboard */; };
 		0ABD447616A1B5A7004C97B0 /* first.png in Resources */ = {isa = PBXBuildFile; fileRef = 0ABD447516A1B5A7004C97B0 /* first.png */; };
 		0ABD447816A1B5A7004C97B0 /* first@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 0ABD447716A1B5A7004C97B0 /* first@2x.png */; };
@@ -46,6 +43,9 @@
 		0AD2EC4B16A1BA9200B411A6 /* wangyuebo.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 0AD2EC4A16A1BA9200B411A6 /* wangyuebo.jpg */; };
 		59372CF617B28DC100333A1C /* DACircularProgressView.m in Sources */ = {isa = PBXBuildFile; fileRef = 59372CF517B28DC100333A1C /* DACircularProgressView.m */; };
 		59372CF817B28DF100333A1C /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 59372CF717B28DF100333A1C /* QuartzCore.framework */; };
+		5981F6B4180154D800157F22 /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 5981F6B1180154D800157F22 /* Default-568h@2x.png */; };
+		5981F6B5180154D800157F22 /* Default.png in Resources */ = {isa = PBXBuildFile; fileRef = 5981F6B2180154D800157F22 /* Default.png */; };
+		5981F6B6180154D800157F22 /* Default@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 5981F6B3180154D800157F22 /* Default@2x.png */; };
 		5991949417AE5082008F9A93 /* downloadButton.png in Resources */ = {isa = PBXBuildFile; fileRef = 5991949217AE5082008F9A93 /* downloadButton.png */; };
 		5991949517AE5082008F9A93 /* downloadButton@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 5991949317AE5082008F9A93 /* downloadButton@2x.png */; };
 		5991949C17AEA850008F9A93 /* nowPlayingGlyph.png in Resources */ = {isa = PBXBuildFile; fileRef = 5991949A17AEA850008F9A93 /* nowPlayingGlyph.png */; };
@@ -117,9 +117,6 @@
 		0ABD446516A1B5A7004C97B0 /* YongZheng-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "YongZheng-Prefix.pch"; sourceTree = "<group>"; };
 		0ABD446616A1B5A7004C97B0 /* DreamAppAppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DreamAppAppDelegate.h; sourceTree = "<group>"; };
 		0ABD446716A1B5A7004C97B0 /* DreamAppAppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DreamAppAppDelegate.m; sourceTree = "<group>"; };
-		0ABD446916A1B5A7004C97B0 /* Default.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Default.png; sourceTree = "<group>"; };
-		0ABD446B16A1B5A7004C97B0 /* Default@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default@2x.png"; sourceTree = "<group>"; };
-		0ABD446D16A1B5A7004C97B0 /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-568h@2x.png"; sourceTree = "<group>"; };
 		0ABD447016A1B5A7004C97B0 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = en; path = en.lproj/MainStoryboard.storyboard; sourceTree = "<group>"; };
 		0ABD447216A1B5A7004C97B0 /* SonglistViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SonglistViewController.h; sourceTree = "<group>"; };
 		0ABD447516A1B5A7004C97B0 /* first.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = first.png; sourceTree = "<group>"; };
@@ -137,6 +134,9 @@
 		59372CF417B28DC100333A1C /* DACircularProgressView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DACircularProgressView.h; sourceTree = "<group>"; };
 		59372CF517B28DC100333A1C /* DACircularProgressView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DACircularProgressView.m; sourceTree = "<group>"; };
 		59372CF717B28DF100333A1C /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
+		5981F6B1180154D800157F22 /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Default-568h@2x.png"; path = "ArtWorks/Default-568h@2x.png"; sourceTree = "<group>"; };
+		5981F6B2180154D800157F22 /* Default.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = Default.png; path = ArtWorks/Default.png; sourceTree = "<group>"; };
+		5981F6B3180154D800157F22 /* Default@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Default@2x.png"; path = "ArtWorks/Default@2x.png"; sourceTree = "<group>"; };
 		5991949217AE5082008F9A93 /* downloadButton.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = downloadButton.png; sourceTree = "<group>"; };
 		5991949317AE5082008F9A93 /* downloadButton@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "downloadButton@2x.png"; sourceTree = "<group>"; };
 		5991949A17AEA850008F9A93 /* nowPlayingGlyph.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = nowPlayingGlyph.png; sourceTree = "<group>"; };
@@ -307,9 +307,6 @@
 				0ABD446016A1B5A7004C97B0 /* InfoPlist.strings */,
 				0ABD446316A1B5A7004C97B0 /* main.m */,
 				0ABD446516A1B5A7004C97B0 /* YongZheng-Prefix.pch */,
-				0ABD446916A1B5A7004C97B0 /* Default.png */,
-				0ABD446B16A1B5A7004C97B0 /* Default@2x.png */,
-				0ABD446D16A1B5A7004C97B0 /* Default-568h@2x.png */,
 				5991A73A17AA7FDD00462831 /* PlayList.plist */,
 			);
 			name = "Supporting Files";
@@ -334,6 +331,9 @@
 		59AC94641800644600F93BF4 /* ArtWorks */ = {
 			isa = PBXGroup;
 			children = (
+				5981F6B1180154D800157F22 /* Default-568h@2x.png */,
+				5981F6B2180154D800157F22 /* Default.png */,
+				5981F6B3180154D800157F22 /* Default@2x.png */,
 				59AC94651800645D00F93BF4 /* AppIcon29x29.png */,
 				59AC94661800645D00F93BF4 /* AppIcon29x29@2x.png */,
 				59AC94671800645D00F93BF4 /* AppIcon40x40.png */,
@@ -414,10 +414,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				0ABD446216A1B5A7004C97B0 /* InfoPlist.strings in Resources */,
-				0ABD446A16A1B5A7004C97B0 /* Default.png in Resources */,
-				0ABD446C16A1B5A7004C97B0 /* Default@2x.png in Resources */,
 				59AF988B17BF677E00634D80 /* downloadProgressButtonPause.png in Resources */,
-				0ABD446E16A1B5A7004C97B0 /* Default-568h@2x.png in Resources */,
 				0ABD447116A1B5A7004C97B0 /* MainStoryboard.storyboard in Resources */,
 				0ABD447616A1B5A7004C97B0 /* first.png in Resources */,
 				59AC94801800645D00F93BF4 /* Icon-72@2x.png in Resources */,
@@ -437,10 +434,13 @@
 				59AC94791800645D00F93BF4 /* AppIcon40x40.png in Resources */,
 				59AC94781800645D00F93BF4 /* AppIcon29x29@2x.png in Resources */,
 				59CEA8AC17CFA555006D5102 /* NowPlayingPauseControl~iphone.png in Resources */,
+				5981F6B6180154D800157F22 /* Default@2x.png in Resources */,
 				0A5DEDEE17E04F1800B67F3F /* progressBar.png in Resources */,
 				59AC94871800645D00F93BF4 /* iTunesArtwork.png in Resources */,
 				0A3E595C16A29B5A0077943D /* 2.mp3 in Resources */,
 				59AC94811800645D00F93BF4 /* Icon-Small-50.png in Resources */,
+				5981F6B5180154D800157F22 /* Default.png in Resources */,
+				5981F6B4180154D800157F22 /* Default-568h@2x.png in Resources */,
 				59AC947B1800645D00F93BF4 /* AppIcon60x60.png in Resources */,
 				0A3E595D16A29B5A0077943D /* 1.mp3 in Resources */,
 				5991A73B17AA7FDD00462831 /* PlayList.plist in Resources */,

@@ -75,14 +75,19 @@
     [audioSession setActive:YES error:nil];
     
     //5. Customized progress indicator
-    UIImage *progressBarImage = [UIImage imageNamed:@"progressBar.png"];
-    [ProgressSlider setThumbImage:progressBarImage forState:UIControlStateNormal];
+    float version = [[[UIDevice currentDevice] systemVersion] floatValue];
+    
+    if (version >= 7.0)
+    {
+        UIImage *progressBarImage = [UIImage imageNamed:@"progressBar.png"];
+        [ProgressSlider setThumbImage:progressBarImage forState:UIControlStateNormal];
+        
+        bt_downloadAll.layer.borderWidth = 1.0;
+        [bt_downloadAll.layer setCornerRadius:8.];
+        bt_downloadAll.layer.borderColor = [bt_downloadAll.titleLabel.textColor CGColor];
+    }
+
     [[UIApplication sharedApplication] beginReceivingRemoteControlEvents];
-    
-    bt_downloadAll.layer.borderWidth = 1;
-    [bt_downloadAll.layer setCornerRadius:8.];
-    bt_downloadAll.layer.borderColor = [bt_downloadAll.titleLabel.textColor CGColor];
-    
     downloadQueue = [[NSMutableDictionary alloc]init];
 }
 
@@ -155,7 +160,7 @@
     NSString *plistPath = [bundleDocumentDirectoryPath stringByAppendingString:@"/PlayList.plist"];
     NSDictionary *dictionary = [[NSDictionary alloc] initWithContentsOfFile:plistPath];
     
-    for (int i = 1; i< dictionary.count; i++)
+    for (int i = 1; i<= dictionary.count; i++)
     {
         Song* song = [[Song alloc]init];
         song.songNumber = [NSString stringWithFormat:@"%d", i];
@@ -372,7 +377,19 @@
 {
     AFNetworkReachabilityStatus currentNetWorkStatus = httpClient.networkReachabilityStatus;
     
-    SongCell* cell =(SongCell*) [[[sender superview] superview]superview];
+    SongCell* cell;
+    
+    float version = [[[UIDevice currentDevice] systemVersion] floatValue];
+    
+    if (version >= 7.0)
+    {
+        cell =(SongCell*) [[[sender superview] superview]superview];
+    }
+    else
+    {
+        cell =(SongCell*) [[sender superview] superview];
+    }
+    
     currentDownloadIndexPath = [tableView indexPathForCell:cell];
     
     //Network Error
@@ -400,7 +417,19 @@
 
 - (void)onPauseDownloadButtonClicked: (id) sender
 {
-    SongCell *cell =(SongCell*) [[[sender superview] superview] superview];
+    SongCell* cell;
+    
+    float version = [[[UIDevice currentDevice] systemVersion] floatValue];
+    
+    if (version >= 7.0)
+    {
+        cell =(SongCell*) [[[sender superview] superview]superview];
+    }
+    else
+    {
+        cell =(SongCell*) [[sender superview] superview];
+    }
+    
     cell.lbl_songStatus.text = @"下载暂停";
     
     NSIndexPath *pausedIndexPath = [tableView indexPathForCell:cell];
@@ -484,6 +513,9 @@
     songCell.lbl_songTitle.hidden = NO;
     songCell.lbl_songTitle.text = song.title;
     songCell.lbl_songStatus.hidden = NO;
+    
+    songCell.lbl_songNumber.hidden = NO;
+    songCell.lbl_songNumber.text = song.songNumber;
     
     switch (song.songStatus) {
         case SongStatusReadytoPlay:
