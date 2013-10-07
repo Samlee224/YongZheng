@@ -7,6 +7,7 @@
 //
 
 #import "DreamAppAppDelegate.h"
+#import "SonglistViewController.h"
 
 @implementation DreamAppAppDelegate
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
@@ -26,6 +27,7 @@
 {
     // Use this method to release shared resources, save user data, invalidate timers, and store enough application state information to restore your application to its current state in case it is terminated later. 
     // If your application supports background execution, this method is called instead of applicationWillTerminate: when the user quits.
+
 }
 
 - (void)applicationWillEnterForeground:(UIApplication *)application
@@ -40,7 +42,19 @@
 
 - (void)applicationWillTerminate:(UIApplication *)application
 {
-    // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
+    //Get view stacks
+    UITabBarController *tabViewController = (UITabBarController *)self.window.rootViewController;
+    UINavigationController *navController = (UINavigationController *)tabViewController.viewControllers[0];
+    SonglistViewController *songListViewController = (SonglistViewController *)navController.topViewController;
+    
+    NSUserDefaults *ud = [NSUserDefaults standardUserDefaults];
+    
+    [ud setObject:[NSString stringWithFormat:@"%d", songListViewController.currentPlayingIndexPath.row] forKey:@"storedTrack"];
+    [ud setObject:[NSString stringWithFormat:@"%d", songListViewController.currentPlayingProgress] forKey:@"storedProgress"];
+    [ud synchronize];
+    
+    //Todo: save progress
+    NSLog(@"%d", songListViewController.songs.count);
     
 }
 

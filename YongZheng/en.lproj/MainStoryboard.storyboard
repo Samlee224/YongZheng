@@ -258,7 +258,6 @@ Enjoy it, Peace out.</string>
         <image name="nowPlayingGlyph.png" width="13" height="16"/>
         <image name="second.png" width="30" height="30"/>
         <image name="wangyuebo.jpg" width="180" height="180"/>
-        <image name="wangyuebo.jpg" width="180" height="180"/>
     </resources>
     <simulatedMetricsContainer key="defaultSimulatedMetrics">
         <simulatedStatusBarMetrics key="statusBar"/>

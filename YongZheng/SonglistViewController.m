@@ -15,13 +15,12 @@
 
 - (NSString *)calculateDuration:(NSTimeInterval) duration;
 - (void)initializeSongs;
-- (void)kProgressSlider:(NSTimer*)timer;
+- (void)updateProgressSlider:(NSTimer*)timer;
 - (IBAction)onUISliderValueChanged:(UISlider *)sender;
 - (void)fileDownload:(NSIndexPath *)indexPath;
 - (IBAction)onDownloadButtonClicked: (id) sender;
 - (void)onPauseDownloadButtonClicked: (id) sender;
-- (void)playOrResumeSong: (NSIndexPath *)indexPath
-                      At: (NSTimeInterval)time;
+- (void)playOrResumeSong: (NSIndexPath *)indexPath At: (NSTimeInterval)time;
 - (void)pauseSong: (NSIndexPath *)indexPath;
 - (void)configureNowPlayingInfo: (float) elapsedPlaybackTime;
 - (void)onPauseDownloadAllButtonPressed:(id)sender;
@@ -33,10 +32,9 @@
 @synthesize songs;
 @synthesize player;
 @synthesize ProgressSlider;
-@synthesize currentProgress;
+@synthesize currentPlayingProgress;
+@synthesize currentPlayingIndexPath;
 @synthesize bt_downloadAll;
-
-@synthesize songDurationinHour, songDurationinMinute, songDurationinSecond;
 
 - (void)viewDidLoad
 {
@@ -66,8 +64,10 @@
     
     //3. Read for stored progress for last play
     NSUserDefaults *ud = [NSUserDefaults standardUserDefaults];
-    storedProgress = [ud objectForKey:@"storedProgress"];
-    storedTrack = [ud objectForKey:@"storedTrack"];
+    currentPlayingIndexPath = [NSIndexPath indexPathForRow:[[ud objectForKey:@"storedTrack"] intValue] inSection:0];
+    currentPlayingProgress = [[ud objectForKey:@"storedProgress"] intValue] - 30;
+    
+    [self playOrResumeSong:currentPlayingIndexPath At:currentPlayingProgress];
     
     //4. Setup Audio Session for Background Playback
     AVAudioSession *audioSession = [AVAudioSession sharedInstance];
@@ -110,6 +110,11 @@
     [self resignFirstResponder];
 }
 
+- (void)didReceiveMemoryWarning
+{
+    [super didReceiveMemoryWarning];
+}
+
 - (void)remoteControlReceivedWithEvent:(UIEvent *)event
 {
     if (event.type == UIEventTypeRemoteControl) {
@@ -120,7 +125,7 @@
                         [self pauseSong:currentPlayingIndexPath];
                     }
                     else{
-                        [self playOrResumeSong:currentPlayingIndexPath At:currentProgress];
+                        [self playOrResumeSong:currentPlayingIndexPath At:currentPlayingProgress];
                     }
                 break;
                 }
@@ -212,10 +217,7 @@
     song.songStatus = SongStatusinDownloadQueue;
     
     //4. Set file path for store downloaded file
-    //NSArray *paths = NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSUserDomainMask, YES);
-    //NSString *path = [paths objectAtIndex:0];
     NSString *path = NSTemporaryDirectory();
-    
     NSString *fileName = [NSString stringWithFormat:@"%d.mp3", (indexPath.row + 1)];
     NSString *filePath = [path stringByAppendingString:fileName];
     
@@ -228,7 +230,6 @@
     cell.lbl_songStatus.text = @"准备下载";
     
     [cell.bt_downloadOrPause removeTarget:self action:@selector(onDownloadButtonClicked:) forControlEvents:UIControlEventTouchUpInside];
-    
     [cell.bt_downloadOrPause setBackgroundImage:[UIImage imageNamed:@"downloadProgressButtonPause.png"] forState:UIControlStateNormal];
     [cell.bt_downloadOrPause addTarget:self action:@selector(onPauseDownloadButtonClicked:) forControlEvents:UIControlEventTouchUpInside];
     
@@ -244,14 +245,10 @@
         //So, we need to re allocate the cell;
         SongCell *cell = (SongCell*)[tableView cellForRowAtIndexPath:indexPath];
         
-        cell.cirProgView_downloadProgress.hidden = YES;
-        cell.bt_downloadOrPause.hidden = YES;
-        
         //Add Duration Label
         cell.lbl_songStatus.text = @"下载完成";
         
-        //NSArray *paths = NSSearchPathForDirectoriesInDomains(NSTemporaryDirectory(), NSUserDomainMask, YES);
-        //NSString *path = [paths objectAtIndex:0];
+        //Copy from temp directory to Library Directory
         NSString *path = NSTemporaryDirectory();
         
         NSString *fileName = [NSString stringWithFormat:@"%d.mp3", (indexPath.row + 1)];
@@ -262,37 +259,36 @@
         NSString *desfileName = [NSString stringWithFormat:@"/%d.mp3", (indexPath.row + 1)];
         NSString *desfilePath = [despath stringByAppendingString:desfileName];
         
-        
         NSFileManager *fileManager = [NSFileManager defaultManager];
-        
         
         [fileManager copyItemAtPath:filePath toPath:desfilePath error:nil];
         [fileManager removeItemAtPath:filePath error:nil];
         
-        
+        //Calculate duration of the song
         AVAudioPlayer *tempPlayer = [[AVAudioPlayer alloc]initWithContentsOfURL:
                                      [[NSURL alloc]initFileURLWithPath:desfilePath] error:nil];
         
+        //UI Update
+        cell.cirProgView_downloadProgress.hidden = YES;
+        cell.bt_downloadOrPause.hidden = YES;
+        
         cell.lbl_playbackDuration.hidden = NO;
         cell.lbl_playbackDuration.text = [self calculateDuration:tempPlayer.duration];
-        
+
+        //Write back to PlayList.plist
         song.s3Url = @"(null)";
         song.duration = cell.lbl_playbackDuration.text;
         
-        song.songStatus = SongStatusReadytoPlay;
-        
         NSString *plistPath = [bundleDocumentDirectoryPath stringByAppendingString:@"/PlayList.plist"];
         NSMutableDictionary *dictionary = [[NSMutableDictionary alloc] initWithContentsOfFile:plistPath];
-        
         NSMutableDictionary *songArray = [dictionary objectForKey:song.songNumber];
         
         [songArray setObject:song.s3Url forKey:@"S3Url"];
         [songArray setObject:song.duration forKey:@"Duration"];
-        //[songArray setObject:song.fileName forKey:@"FileName"];
-        
         
         [dictionary writeToFile:plistPath atomically:NO];
         
+        song.songStatus = SongStatusReadytoPlay;
         [downloadQueue removeObjectForKey:[NSString stringWithFormat:@"%d", indexPath.row]];
     }
     //Failed
@@ -311,17 +307,19 @@
         cell.bt_downloadOrPause.hidden = NO;
         
         [cell.bt_downloadOrPause removeTarget:self action:@selector(onPauseDownloadButtonClicked:) forControlEvents:UIControlEventTouchUpInside];
-        
         [cell.bt_downloadOrPause setBackgroundImage:[UIImage imageNamed:@"downloadButton.png"] forState:UIControlStateNormal];
-        
-        [cell.bt_downloadOrPause addTarget:self action:@selector(onDownloadButtonClicked:)
-                          forControlEvents:UIControlEventTouchUpInside];
+        [cell.bt_downloadOrPause addTarget:self action:@selector(onDownloadButtonClicked:) forControlEvents:UIControlEventTouchUpInside];
         
         song.songStatus = SongStatusWaitforDownload;
         
         NSFileManager *fileManager = [NSFileManager defaultManager];
         
+        NSString *path = NSTemporaryDirectory();
+        NSString *fileName = [NSString stringWithFormat:@"%d.mp3", (indexPath.row + 1)];
+        NSString *filePath = [path stringByAppendingString:fileName];
+        
         [fileManager removeItemAtPath:filePath error:nil];
+        
         [downloadQueue removeObjectForKey:[NSString stringWithFormat:@"%d", indexPath.row]];
         
     }];
@@ -343,12 +341,14 @@
 
 - (NSString *)calculateDuration:(NSTimeInterval) duration
 {
+    NSInteger songDurationinHour, songDurationinMinute, songDurationinSecond;
+    
     //Hour
-    self.songDurationinHour = floor(duration/60/60);
+    songDurationinHour = floor(duration/60/60);
     NSString *hour = [NSString stringWithFormat:@"%d", songDurationinHour];
     
     //Minute
-    self.songDurationinMinute = floor(duration/60 - songDurationinHour * 60);
+    songDurationinMinute = floor(duration/60 - songDurationinHour * 60);
     
     NSString *minute;;
     if (songDurationinMinute<10) {
@@ -359,7 +359,7 @@
     }
     
     //Second
-    self.songDurationinSecond = round(duration - songDurationinHour * 60 * 60 - songDurationinMinute * 60);
+    songDurationinSecond = round(duration - songDurationinHour * 60 * 60 - songDurationinMinute * 60);
     
     NSString *second;
     if (songDurationinSecond<10) {
@@ -478,10 +478,8 @@
 }
 
 
-- (void)didReceiveMemoryWarning
-{
-    [super didReceiveMemoryWarning];
-}
+//**************************************************************************************************
+//TableView delegate
 
 - (NSInteger) tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
@@ -594,7 +592,7 @@
         }
         else
         {
-            [self playOrResumeSong:indexPath At:currentProgress];
+            [self playOrResumeSong:indexPath At:currentPlayingProgress];
         }
     }
     //Different Cell
@@ -604,17 +602,17 @@
     }
 }
 
-- (void)kProgressSlider:(NSTimer*)timer
+- (void)updateProgressSlider:(NSTimer*)timer
 {
     self.ProgressSlider.value += 0.01;
     timerInterval++;
 
     if (timerInterval == 100) {
         timerInterval = 0;
-        self.currentProgress++;
+        self.currentPlayingProgress++;
         
-        self.lbl_currentProgress.text = [self calculateDuration:self.currentProgress];
-        self.lbl_songLength.text = [NSString stringWithFormat:@"-%@",[self calculateDuration:(player.duration - self.currentProgress)]];
+        self.lbl_currentProgress.text = [self calculateDuration:self.currentPlayingProgress];
+        self.lbl_songLength.text = [NSString stringWithFormat:@"-%@",[self calculateDuration:(player.duration - self.currentPlayingProgress)]];
     }
     
 }
@@ -624,7 +622,7 @@
     [playbackTimer invalidate];
     [player pause];
     
-    currentProgress = player.currentTime;
+    currentPlayingProgress = player.currentTime;
     
     SongCell *cell = (SongCell*)[self.tableView cellForRowAtIndexPath:currentPlayingIndexPath];
     [cell.img_playingStatus setImage:[UIImage imageNamed:@"NowPlayingPauseControl~iphone.png"]];
@@ -635,8 +633,7 @@
 }
 
 
-- (void) playOrResumeSong:(NSIndexPath *)indexPath
-                       At:(NSTimeInterval)time
+- (void) playOrResumeSong:(NSIndexPath *)indexPath At:(NSTimeInterval)time
 {
     [player stop];
     [playbackTimer invalidate];
@@ -648,12 +645,6 @@
     previousCell.img_playingStatus.hidden = YES;
     
     Song *song= [self.songs objectAtIndex:indexPath.row];
-    //storedTrack = [NSNumber numberWithInt:indexPath.row];
-    //currentDownloadIndexPath = indexPath;
-    //NSUserDefaults *ud = [NSUserDefaults standardUserDefaults];
-    //[ud setObject:storedTrack forKey:@"storedTrack"];
-    //[ud synchronize];
-    
     SongCell *cell = (SongCell*)[self.tableView cellForRowAtIndexPath:indexPath];
     //if song is downloaded than play, otherwize show popup and notice to download.
     if (![song.s3Url isEqual: @"(null)"])
@@ -680,14 +671,14 @@
         [cell.img_playingStatus setImage:[UIImage imageNamed:@"nowPlayingGlyph.png"]];
         
         //Update Progress Slider
-        self.currentProgress = time;
+        self.currentPlayingProgress = time;
         playbackTimer = [NSTimer scheduledTimerWithTimeInterval:0.01
                                                       target:self
-                                                    selector:@selector(kProgressSlider:)
+                                                    selector:@selector(updateProgressSlider:)
                                                     userInfo:nil repeats:YES];
         
         self.ProgressSlider.maximumValue = player.duration;
-        self.ProgressSlider.value = currentProgress;
+        self.ProgressSlider.value = currentPlayingProgress;
         self.lbl_songLength.text =[NSString stringWithFormat:@"-%@",[self calculateDuration:player.duration]];
         self.lbl_currentProgress.text = [self calculateDuration:player.currentTime];
         
@@ -701,7 +692,7 @@
     
     float value = sender.value;
     player.currentTime = value;
-    self.currentProgress = value;
+    self.currentPlayingProgress = value;
     
     [self configureNowPlayingInfo:value];
 }
@@ -732,6 +723,7 @@
 
 /*****************************************************************************************/
 /* AVAudioPlayerDelegate */
+
 - (void)audioPlayerDidFinishPlaying:(AVAudioPlayer *)player successfully:(BOOL)flag;
 {
     //Stop timer
@@ -749,10 +741,12 @@
     [self pauseSong:currentPlayingIndexPath];
 }
 
+
 - (void)audioPlayerEndInterruption:(AVAudioPlayer *)player withOptions:(NSUInteger)flags
 {
-    [self playOrResumeSong:currentPlayingIndexPath At:currentProgress];
+    [self playOrResumeSong:currentPlayingIndexPath At:currentPlayingProgress];
 }
+
 /*****************************************************************************************/
 
 - (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex

@@ -19,43 +19,33 @@
 
 @interface SonglistViewController: UIViewController <AVAudioPlayerDelegate, UIAlertViewDelegate>
 {
-    UIImageView     *imageView;
     UITableView     *tableView;
     AFHTTPClient    *httpClient;
     NSMutableDictionary  *downloadQueue;
     
     NSString        *bundleDocumentDirectoryPath;
     
-    NSInteger       currentProgress;
+    NSInteger       currentPlayingProgress;
+    NSIndexPath     *currentPlayingIndexPath;
+    
     NSInteger       timerInterval;
-    
-    NSInteger       songDurationinHour;
-    NSInteger       songDurationinMinute;
-    NSInteger       songDurationinSecond;
-    
-    NSNumber        *storedTrack;
-    NSNumber        *storedProgress;
     
     NSTimer         *playbackTimer;
     
     NSIndexPath     *currentDownloadIndexPath;
-    NSIndexPath     *currentPlayingIndexPath;
-
     NSInteger       downloadPausedCount;
 }
 
 @property (nonatomic, retain) NSMutableArray* songs;
+@property (nonatomic, retain) AVAudioPlayer *player;
+
+@property (nonatomic) NSInteger currentPlayingProgress;
+@property (nonatomic, retain) NSIndexPath *currentPlayingIndexPath;
+
+@property (nonatomic, retain) NSTimer *timer;
 
 @property (nonatomic, retain) IBOutlet UITableView *tableView;
 @property (nonatomic,retain) IBOutlet UISlider *ProgressSlider;
-
-@property (nonatomic, retain) AVAudioPlayer *player;
-@property (nonatomic) NSInteger songDurationinHour;
-@property (nonatomic) NSInteger songDurationinMinute;
-@property (nonatomic) NSInteger songDurationinSecond;
-@property (nonatomic) NSInteger currentProgress;
-@property (nonatomic, retain) NSTimer *timer;
-
 @property (retain, nonatomic) IBOutlet UILabel *lbl_currentProgress;
 @property (retain, nonatomic) IBOutlet UILabel *lbl_songLength;
 @property (retain, nonatomic) IBOutlet UIButton *bt_downloadAll;
