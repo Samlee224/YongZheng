@@ -28,6 +28,9 @@
     NSInteger       currentPlayingProgress;
     NSIndexPath     *currentPlayingIndexPath;
     
+    NSInteger       storedPlayingProgress;
+    NSIndexPath     *storedPlayingIndexPath;
+    
     NSInteger       timerInterval;
     
     NSTimer         *playbackTimer;

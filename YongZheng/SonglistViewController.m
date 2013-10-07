@@ -64,10 +64,16 @@
     
     //3. Read for stored progress for last play
     NSUserDefaults *ud = [NSUserDefaults standardUserDefaults];
-    currentPlayingIndexPath = [NSIndexPath indexPathForRow:[[ud objectForKey:@"storedTrack"] intValue] inSection:0];
-    currentPlayingProgress = [[ud objectForKey:@"storedProgress"] intValue] - 30;
+    storedPlayingIndexPath = [NSIndexPath indexPathForRow:([[ud objectForKey:@"storedTrack"] intValue]-1) inSection:0];
+    storedPlayingProgress = [[ud objectForKey:@"storedProgress"] intValue];
     
-    [self playOrResumeSong:currentPlayingIndexPath At:currentPlayingProgress];
+    if (storedPlayingProgress >= 30) {
+        storedPlayingProgress = storedPlayingProgress - 30;
+    }
+    
+    if ([[ud objectForKey:@"storedTrack"] intValue] != 0) {
+        [self playOrResumeSong:storedPlayingIndexPath At:storedPlayingProgress];
+    }
     
     //4. Setup Audio Session for Background Playback
     AVAudioSession *audioSession = [AVAudioSession sharedInstance];
@@ -549,6 +555,7 @@
         {
             songCell.img_playingStatus.hidden = NO;
             songCell.lbl_playbackDuration.hidden = NO;
+            songCell.lbl_playbackDuration.text = song.duration;
             [songCell.img_playingStatus setImage:[UIImage imageNamed:@"nowPlayingGlyph.png"]];
             songCell.lbl_songStatus.text = @"正在播放";
             break;

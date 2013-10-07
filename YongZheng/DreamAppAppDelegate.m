@@ -49,7 +49,7 @@
     
     NSUserDefaults *ud = [NSUserDefaults standardUserDefaults];
     
-    [ud setObject:[NSString stringWithFormat:@"%d", songListViewController.currentPlayingIndexPath.row] forKey:@"storedTrack"];
+    [ud setObject:[NSString stringWithFormat:@"%d", songListViewController.currentPlayingIndexPath.row + 1] forKey:@"storedTrack"];
     [ud setObject:[NSString stringWithFormat:@"%d", songListViewController.currentPlayingProgress] forKey:@"storedProgress"];
     [ud synchronize];
     
