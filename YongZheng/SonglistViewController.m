@@ -260,7 +260,7 @@
         NSString *fileName = [NSString stringWithFormat:@"%d.mp3", (indexPath.row + 1)];
         NSString *filePath = [path stringByAppendingString:fileName];
         
-        NSArray *despaths = NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSUserDomainMask, YES);
+        NSArray *despaths = NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES);
         NSString *despath = [despaths objectAtIndex:0];
         NSString *desfileName = [NSString stringWithFormat:@"/%d.mp3", (indexPath.row + 1)];
         NSString *desfilePath = [despath stringByAppendingString:desfileName];
@@ -504,8 +504,6 @@
 
 -(UITableViewCell *) tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    NSLog(@"indexPath = %d", indexPath.row);
-    
     Song *song = [self.songs objectAtIndex:indexPath.row];
     SongCell *songCell = [self.tableView dequeueReusableCellWithIdentifier:@"SongCell" forIndexPath:indexPath];
     
